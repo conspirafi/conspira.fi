@@ -14,10 +14,7 @@ export interface ApiDataContextType {
   isLoadingMarket: boolean;
   marketError: TRPCClientErrorLike<AppRouter> | null;
   refetchMarket: () => Promise<
-    QueryObserverResult<
-      IPMXGetMarket | null,
-      TRPCClientErrorLike<AppRouter>
-    >
+    QueryObserverResult<IPMXGetMarket | null, TRPCClientErrorLike<AppRouter>>
   >;
 
   marketFeesData: IPMXGetMarketFees | null;

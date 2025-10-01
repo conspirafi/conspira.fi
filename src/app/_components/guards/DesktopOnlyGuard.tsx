@@ -16,8 +16,8 @@ const MobileMessage = () => (
     </p>
     <p className="text-red relative z-10 text-[1.5vh]">
       This experience is designed for larger screens. <br></br> Please open on a
-      desktop or laptop <br></br> for the best viewing experience.<br></br> It&apos;s
-      too early for you here.
+      desktop or laptop <br></br> for the best viewing experience.<br></br>{" "}
+      It&apos;s too early for you here.
     </p>
     <Image
       src={"/mobile_screen.png"}
