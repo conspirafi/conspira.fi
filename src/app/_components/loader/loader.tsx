@@ -149,9 +149,9 @@ const Loader = () => {
 
         setIsSpinning(spinner);
 
-        for (let c = 0; c < text.length; c++) {
+        for (const char of text) {
           if (!mountedRef.current) return;
-          setCurrentLine((prev) => prev + text[c]);
+          setCurrentLine((prev) => prev + char);
           await sleep(TYPING_SPEED);
         }
 
@@ -232,9 +232,9 @@ const Loader = () => {
       for (const quote of quotes) {
         if (!mountedRef.current) return;
         setCurrentQuoteLine("");
-        for (let c = 0; c < quote.length; c++) {
+        for (const char of quote) {
           if (!mountedRef.current) return;
-          setCurrentQuoteLine((prev) => prev + quote[c]);
+          setCurrentQuoteLine((prev) => prev + char);
           await sleep(TYPING_SPEED);
         }
         setQuoteLines((prev) => [...prev, quote]);
@@ -250,9 +250,9 @@ const Loader = () => {
       await sleep(200);
       setShowCTA(true);
 
-      for (let c = 0; c < ctaText.length; c++) {
+      for (const char of ctaText) {
         if (!mountedRef.current) return;
-        setCurrentCTAText((prev) => prev + ctaText[c]);
+        setCurrentCTAText((prev) => prev + char);
         await sleep(TYPING_SPEED);
       }
 

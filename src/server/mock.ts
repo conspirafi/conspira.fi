@@ -230,7 +230,7 @@ export const historyMockForYes: IMarketHistory = {
       market_cap: 500000.0000000167,
     },
     {
-      price: 0.0005578247905384161273,
+      price: 0.000557824790538416,
       timestamp: "2025-09-29T19:23:18.648Z",
       volume: 0,
       market_cap: 500000,
@@ -353,7 +353,7 @@ export const historyMockForNo: IMarketHistory = {
       market_cap: 500000,
     },
     {
-      price: 0.00044217713899893198801,
+      price: 0.000442177138998932,
       timestamp: "2025-09-29T16:28:11.539Z",
       volume: 0,
       market_cap: 500000,

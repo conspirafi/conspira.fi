@@ -53,7 +53,7 @@ export default function TwitterCard({
 
       <div className="overlay absolute inset-0 flex items-center justify-center gap-2.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <div className="flex items-center bg-white p-0.75 text-[17px] leading-4.5 text-black">
-          Take a see
+          View on X
         </div>
         <WhiteArrowIcon />
       </div>

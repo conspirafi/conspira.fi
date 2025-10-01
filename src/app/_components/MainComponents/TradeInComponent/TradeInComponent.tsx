@@ -14,8 +14,8 @@ import { roundToTwoDecimals } from "~/app/utils/math";
 interface TradeInProps {
   yesHistory: IMarketHistory | undefined;
   noHistory: IMarketHistory | undefined;
-  market: IPMXGetMarket | undefined;
-  marketFees: IPMXGetMarketFees | undefined;
+  market: IPMXGetMarket | null;
+  marketFees: IPMXGetMarketFees | null;
 }
 
 type HistoryType = "Yes" | "No";
@@ -72,14 +72,12 @@ export const TradeInComponent = (props: TradeInProps) => {
 
     const total =
       parseFloat(rawPrice.yes.toString()) + parseFloat(rawPrice.no.toString());
-    let yesPercentage, noPercentage;
-
     if (total === 0) {
       return { yes: 50, no: 50 };
     }
 
-    yesPercentage = (rawPrice.yes / total) * 100;
-    noPercentage = (rawPrice.no / total) * 100;
+    const yesPercentage = (rawPrice.yes / total) * 100;
+    const noPercentage = (rawPrice.no / total) * 100;
 
     return {
       yes: parseFloat(yesPercentage.toFixed(1)),

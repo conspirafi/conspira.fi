@@ -42,7 +42,6 @@ interface OverlayProps {
 
 const Overlay: React.FC<OverlayProps> = (props) => {
   const activeEventCase = useEventCasesStore((state) => state.activeEventCase);
-  props.data?.end_date;
   return (
     <div className="overlay pointer-events-none relative z-0 flex h-screen w-screen items-center justify-center p-[15px]">
       <Borders />

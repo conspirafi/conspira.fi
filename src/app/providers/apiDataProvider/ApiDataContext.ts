@@ -10,22 +10,22 @@ import type {
 } from "~/server/schemas";
 
 export interface ApiDataContextType {
-  marketData: IPMXGetMarket | undefined;
+  marketData: IPMXGetMarket | null;
   isLoadingMarket: boolean;
   marketError: TRPCClientErrorLike<AppRouter> | null;
   refetchMarket: () => Promise<
     QueryObserverResult<
-      IPMXGetMarket | undefined,
+      IPMXGetMarket | null,
       TRPCClientErrorLike<AppRouter>
     >
   >;
 
-  marketFeesData: IPMXGetMarketFees | undefined;
+  marketFeesData: IPMXGetMarketFees | null;
   isLoadingMarketFees: boolean;
   marketFeesError: TRPCClientErrorLike<AppRouter> | null;
   refetchMarketFees: () => Promise<
     QueryObserverResult<
-      IPMXGetMarketFees | undefined,
+      IPMXGetMarketFees | null,
       TRPCClientErrorLike<AppRouter>
     >
   >;

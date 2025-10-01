@@ -26,10 +26,9 @@ export function prepareTableData(
       const total =
         parseFloat(rawPrice.yes.toString()) +
         parseFloat(rawPrice.no.toString());
-      let yesPercentage, noPercentage;
 
-      yesPercentage = (rawPrice.yes / total) * 100;
-      noPercentage = (rawPrice.no / total) * 100;
+      const yesPercentage = (rawPrice.yes / total) * 100;
+      const noPercentage = (rawPrice.no / total) * 100;
 
       return [
         {
