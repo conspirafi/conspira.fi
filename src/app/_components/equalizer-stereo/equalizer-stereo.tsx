@@ -37,7 +37,7 @@ const EqualizerStereo: React.FC<Props> = ({
 
     const computeLevel = (data: Uint8Array) => {
       let sum = 0;
-      for (let b = 0; b < data.length; b++) sum += data[b];
+      for (const value of data) sum += value;
       return sum / (data.length * 255);
     };
 

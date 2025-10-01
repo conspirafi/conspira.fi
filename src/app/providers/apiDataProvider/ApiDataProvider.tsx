@@ -27,7 +27,7 @@ export const ApiDataProvider: React.FC<ApiDataProviderProps> = ({
 
   const {
     data: marketPresaleDetailsData,
-    isLoading: isLoadingPresaleMarketDetails,
+    isLoading: isLoadingMarketPresaleDetails,
     error: marketPresaleDetailsError,
     refetch: refetchMarketPresaleDetails,
   } = api.pmxMarketRouter.getPresaleMarketDetails.useQuery();
@@ -48,18 +48,18 @@ export const ApiDataProvider: React.FC<ApiDataProviderProps> = ({
 
   const contextValue = useMemo(
     () => ({
-      marketData: marketData || undefined,
+      marketData: marketData ?? null,
       isLoadingMarket,
       marketError,
       refetchMarket,
 
-      marketFeesData: marketFeesData || undefined,
+      marketFeesData: marketFeesData ?? null,
       isLoadingMarketFees,
       marketFeesError,
       refetchMarketFees,
 
       marketPresaleDetailsData: marketPresaleDetailsData || undefined,
-      isLoadingPresaleMarketDetails,
+      isLoadingMarketPresaleDetails,
       marketPresaleDetailsError,
       refetchMarketPresaleDetails,
 
@@ -85,7 +85,7 @@ export const ApiDataProvider: React.FC<ApiDataProviderProps> = ({
       refetchMarketFees,
 
       marketPresaleDetailsData,
-      isLoadingPresaleMarketDetails,
+      isLoadingMarketPresaleDetails,
       marketPresaleDetailsError,
       refetchMarketPresaleDetails,
 

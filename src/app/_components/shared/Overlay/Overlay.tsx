@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, type Easing } from "framer-motion";
 
 import TwitterIcon from "../../icons/TwitterIcon";
@@ -42,7 +42,19 @@ interface OverlayProps {
 
 const Overlay: React.FC<OverlayProps> = (props) => {
   const activeEventCase = useEventCasesStore((state) => state.activeEventCase);
-  props.data?.end_date;
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleWheel = () => {
+      if (!hasScrolled) {
+        setHasScrolled(true);
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [hasScrolled]);
+
   return (
     <div className="overlay pointer-events-none relative z-0 flex h-screen w-screen items-center justify-center p-[15px]">
       <Borders />
@@ -136,11 +148,19 @@ const Overlay: React.FC<OverlayProps> = (props) => {
         <div className="absolute right-0 bottom-0">
           <CrossIcon />
         </div>
-        <div>
-          <p className="font-enhanced-led-board mb-20 text-xl">
-            Scroll & Discover
-          </p>
-        </div>
+        <AnimatePresence>
+          {!hasScrolled && (
+            <motion.div
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <p className="font-enhanced-led-board mb-20 text-xl">
+                Scroll & Discover
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <div className="fixed top-1/2 z-20 flex h-auto w-full -translate-y-1/2 items-center justify-between pr-[42px] pl-6">
         <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-start">

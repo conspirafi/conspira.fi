@@ -7,10 +7,41 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { LoaderProvider } from "./providers/LoaderProvider";
 import { ApiDataProvider } from "./providers/apiDataProvider/ApiDataProvider";
 
+const siteUrl = "https://conspira.fi";
+const title = "Conspira.fi - Conspiracy Prediction Markets";
+const description =
+  "Every week, a new conspiracy becomes a market. Prediction markets cut through the noise. Every signal strengthens the symbol: $MOCK.";
+const ogImage = `${siteUrl}/conspirafi-og.png`;
+
 export const metadata: Metadata = {
-  title: "Conspira.Fi",
-  description: "Will comet 3I/ATLAS show evidence of alien technology?",
+  title,
+  description,
+  metadataBase: new URL(siteUrl),
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    title,
+    description:
+      "From comets to psyops, every conspiracy becomes a signal. Trade the probabilities, track the truth, strengthen the symbol: $MOCK.",
+    images: [
+      {
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: "Conspira.fi - Conspiracy Prediction Markets",
+      },
+    ],
+    siteName: "Conspira.fi",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description:
+      "Conspiracies collapse into probabilities. Prediction markets are capitalism applied to truth. Every signal strengthens the symbol: $MOCK.",
+    images: [ogImage],
+    creator: "@agent_mock",
+  },
 };
 
 const geist = Geist({

@@ -26,9 +26,9 @@ export const pmxMarketRouter = createTRPCRouter({
       const pmxMarketResponse = (await pmxApiClient.get(
         `markets?select=*&slug=eq.${process.env.MARKET_SLUG}`,
       )) as AxiosResponse<IPMXGetMarket[]>;
-      return pmxMarketResponse.data[0] || false;
+      return pmxMarketResponse.data[0] || null;
     } catch {
-      return false;
+      return null;
     }
   }),
   getMarketFees: publicProcedure.query(async () => {
@@ -38,7 +38,7 @@ export const pmxMarketRouter = createTRPCRouter({
       )) as AxiosResponse<IPMXGetMarketFees>;
       return pmxMarketFeesResponse.data;
     } catch {
-      return false;
+      return null;
     }
   }),
   getMarketHistory: publicProcedure
