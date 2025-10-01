@@ -44,6 +44,7 @@
   --color-light-green: #61c454;
   --color-light-red: #e13737;
     --color-red: #FF0000;
+  --font-mono-manual: "BB Manual Mono Pro Original", monospace;
 }
 
 @layer base {
