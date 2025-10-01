@@ -89,12 +89,18 @@ const Loader = () => {
     return () => clearInterval(interval);
   }, [isSpinning]);
 
+  const handleSpaceActivation = () => {
+    if (ctaFinished) {
+      setIsFlashing(true);
+      setIsEntered(true);
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space" && ctaFinished) {
         event.preventDefault();
-        setIsFlashing(true);
-        setIsEntered(true);
+        handleSpaceActivation();
       }
     };
 
@@ -345,7 +351,19 @@ const Loader = () => {
                       : currentCTAText.length,
                   )}
                   {currentCTAText.includes("SPACE") && (
-                    <span className="loader__rainbow-text">SPACE</span>
+                    <span
+                      className="loader__rainbow-text cursor-pointer"
+                      onClick={handleSpaceActivation}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          handleSpaceActivation();
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      SPACE
+                    </span>
                   )}
                   {currentCTAText.indexOf("SPACE") !== -1 &&
                     currentCTAText.length >
