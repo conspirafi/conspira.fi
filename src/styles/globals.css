@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@layer theme, base, components, utilities;
+
+@font-face {
+  font-family: Enhanced Led Board;
+  src: url("/fonts/Enhanced-LED-Board-7/enhanced_led_board-7.ttf")
+    format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url("/fonts/Inter/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: Hudson NY Pro;
+  src: url("/fonts/HudsonNYPro/HudsonNYPro-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: BB Manual Mono Pro Original;
+  src: url("/fonts/BBManualMonoProOriginal/BB Manual Mono (Pro) Original Regular.ttf")
+    format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+@theme {
+  --font-sans:
+    "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-enhanced-led-board: "Enhanced Led Board", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --color-base-white: #ffffff;
+  --color-base-gray: #7676761a;
+  --color-base-black: #000000;
+  --color-base-blue: #1e51da;
+  --color-base-dark-gray: #0d1a2a;
+  --color-base-green: #61c454;
+  --color-base-red: #e13737;
+  --color-light-green: #61c454;
+  --color-light-red: #e13737;
+    --color-red: #FF0000;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-base-black text-base-white font-sans;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}

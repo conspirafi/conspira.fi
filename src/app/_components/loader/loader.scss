@@ -1,0 +1,107 @@
+.loader {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+
+  &__cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    margin-left: 6px;
+    background: white;
+    vertical-align: bottom;
+    border-radius: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+
+  &__rainbow-text {
+    animation: sharp-color-change 1.2s infinite;
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sharp-color-change {
+  0%,
+  24.99% {
+    color: #ff0000;
+  }
+  25%,
+  49.99% {
+    color: #ffff00;
+  }
+  50%,
+  74.99% {
+    color: #00ff00;
+  }
+  75%,
+  99.99% {
+    color: #0000ff;
+  }
+  100% {
+    color: #ff0000;
+  }
+}
+
+.tv-effect {
+  position: fixed;
+  inset: 0;
+  background: white;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.tv-effect.flash {
+  animation: flash 0.3s forwards;
+}
+
+.tv-effect.shrink {
+  animation: shrink 0.3s forwards;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes shrink {
+  0% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(0.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+}

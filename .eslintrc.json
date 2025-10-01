@@ -1,0 +1,57 @@
+{
+    "root": true,
+    "extends": [
+        "next",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/stylistic",
+        "plugin:prettier/recommended",
+        "prettier",
+        "plugin:@tanstack/eslint-plugin-query/recommended"
+    ],
+    "globals": {
+        "JSX": true,
+        "React": true,
+        "location": "readonly"
+    },
+    "rules": {
+        "indent": "off",
+        "no-console": "off",
+        "no-unused-vars": "off",
+        "consistent-return": "off",
+        "object-curly-newline": "off",
+        "import/prefer-default-export": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "no-case-declarations": "off",
+        "linebreak-style": ["off", "windows"],
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "js": "never",
+                "jsx": "never",
+                "ts": "never",
+                "tsx": "never"
+            }
+        ],
+        "@typescript-eslint/consistent-type-definitions": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/ban-types": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+            }
+        ],
+        "@typescript-eslint/ban-tslint-comment": "off",
+        "no-empty-function": "off",
+        "@typescript-eslint/no-empty-function": "warn",
+        "prettier/prettier": "warn"
+    },
+    "ignorePatterns": [
+        "public/lib/charting_library",
+        "app/utils/TradingViewChart/charting_library",
+        "app/utils/TradingViewChart/datafeed"
+    ]
+}
