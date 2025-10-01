@@ -26,7 +26,7 @@ export const Borders = () => {
           href="https://fantik.studio"
           target="_blank"
         >
-          Website by Fantik Studio
+          Design by Fantik Studio
         </a>
         <BottomRightBorder />
       </div>

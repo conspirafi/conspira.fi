@@ -5,7 +5,7 @@ const InfoRow: React.FC<{ label: string; children: React.ReactNode }> = ({
   children,
 }) => (
   <div className="flex max-w-[500px] items-start gap-x-6">
-    <div className="flex w-14 flex-shrink-0 items-center gap-x-2 pt-1">
+    <div className="flex w-20 flex-shrink-0 items-center gap-x-2 pt-1">
       <span className="h-2 w-2 bg-gray-600"></span>
       <p className="text-sm text-gray-400">{label}</p>
     </div>
@@ -22,11 +22,11 @@ interface EventDetailsProps {
 const EventDetails: React.FC<EventDetailsProps> = ({ title, spec, link }) => {
   return (
     <div className="flex max-w-2xl flex-col gap-y-8 text-white">
-      <InfoRow label="Title">
+      <InfoRow label="Signal">
         <h1 className="text-[42px] leading-[100%]">{title}</h1>
       </InfoRow>
 
-      <InfoRow label="Specs">
+      <InfoRow label="Context">
         <p className="text-xs text-white">{spec}</p>
       </InfoRow>
 
@@ -37,7 +37,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ title, spec, link }) => {
           rel="noopener noreferrer"
           className="group pointer-events-auto inline-flex items-center gap-x-2 border-b border-gray-500 pb-1 text-lg text-white transition-colors hover:border-white"
         >
-          Full market on PMX
+          Prediciton market on PMX
           <svg
             width="12"
             height="12"

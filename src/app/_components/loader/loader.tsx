@@ -6,20 +6,30 @@ import { useLoader } from "~/app/providers/LoaderProvider";
 
 const Loader = () => {
   const messages = [
-    { text: "~$ ./boot_conspirafi.sh", items: [], spinner: false },
+    { text: "~$ ./boot_conspiracies.sh", items: [], spinner: false },
     {
-      text: "Launching software...",
+      text: "Decrypting hidden protocols...",
       items: [],
       spinner: true,
     },
     {
-      text: "Loading website...",
-      items: ["index.html", "styles.css", "scripts.js"],
+      text: "Loading prediction engine...",
+      items: ["markets.db", "liquidity.cfg", "resolution.log"],
       spinner: true,
     },
     {
-      text: "Loading canvas...",
-      items: ["canvas.js", "3d_scene.glb", "shaders.frag", "textures.png"],
+      text: "Accessing conspiracy files...",
+      items: ["deep_state.db", "ufosightings.csv", "mkultra_notes.txt"],
+      spinner: true,
+    },
+    // {
+    //   text: "Booting Agent Mock interface...",
+    //   items: ["mock_agent.sys", "mock_signal_feed.txt", "burn_counter.dat"],
+    //   spinner: true,
+    // },
+    {
+      text: "Preparing first signal...",
+      items: ["atlas_3I_logs.bin", "alien_signals.mp4"],
       spinner: true,
     },
   ];
@@ -41,7 +51,7 @@ const Loader = () => {
   const [showQuotes, setShowQuotes] = useState<boolean>(false);
   const [quoteLines, setQuoteLines] = useState<string[]>([]);
   const [currentQuoteLine, setCurrentQuoteLine] = useState<string>("");
-  const [promptPrefix, setPromptPrefix] = useState<string>("user@conspira: ");
+  const [promptPrefix, setPromptPrefix] = useState<string>("mock@conspirafi: ");
   const [isWaiting, setIsWaiting] = useState<boolean>(true);
   const [isFlashing, setIsFlashing] = useState<boolean>(false);
   const [isShrinking, setIsShrinking] = useState<boolean>(false);
@@ -60,7 +70,7 @@ const Loader = () => {
 
   const { setIsLoading, setIsEntered } = useLoader();
 
-  const ctaText = "Press SPACE to enter website";
+  const ctaText = "Press SPACE to reveal the signal";
 
   useEffect(() => {
     if (!isSpinning) {
@@ -270,7 +280,7 @@ const Loader = () => {
     >
       <div className={showContent ? "flex flex-col items-center" : "hidden"}>
         <h1 className="mb-[28px] text-center font-[Hudson_NY_Pro] text-[50px]">
-          $ CONSPIRA.FI
+          CONSPIRA.FI
         </h1>
         <div
           className="w-full max-w-[300px] overflow-hidden rounded-md bg-black p-4"
