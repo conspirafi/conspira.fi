@@ -90,7 +90,14 @@ export const FundingStateComponent: React.FC<FundingStateComponentProps> = (
         </a>
       </div>
 
-      <span className="text-[12px] opacity-30">Powered by Agent $MOCK</span>
+      <a
+        href="https://dexscreener.com/solana/ee7o1zq7w5c65aapgvjnq4pa7lxhhaigjnjohqarvbcx"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-[12px] underline opacity-30 transition-opacity hover:opacity-60"
+      >
+        Powered by Agent $MOCK
+      </a>
     </div>
   );
 };
