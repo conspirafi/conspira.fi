@@ -13,8 +13,8 @@ import LinkIcon from "~/app/_components/icons/LinkIcon";
 
 const Marketlink = ({ link = "" }) => {
   return (
-    <div className="flex flex-col items-start justify-center gap-3">
-      <span className="text-sm opacity-30">Market Link</span>
+    <div className="flex flex-col items-start justify-center gap-2">
+      <span className="text-xs opacity-30">Market Link</span>
       <div className="flex items-center justify-center gap-x-2">
         <a
           href={link}
@@ -49,8 +49,8 @@ const VolumeElement: React.FC<VolumeElementProps> = ({ marketFees }) => {
   }
 
   return (
-    <div className="flex flex-col items-start justify-center gap-3">
-      <span className="text-sm opacity-30">Volume</span>
+    <div className="flex flex-col items-start justify-center gap-2">
+      <span className="text-xs opacity-30">Volume</span>
       <span className="font-enhanced-led-board text-xl">${volume}</span>
     </div>
   );
@@ -60,7 +60,7 @@ const MobileEventDetails: React.FC<MobileEventDetailsProps> = (props) => {
   const { isDesktop } = useViewport();
 
   return (
-    <div className="flex w-full items-center justify-between text-white">
+    <div className="flex w-full items-center justify-start gap-8 text-white">
       <EventTimer
         targetDateString={props?.data?.end_date || undefined}
         isDesktop={isDesktop}

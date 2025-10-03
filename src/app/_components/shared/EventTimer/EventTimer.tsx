@@ -8,21 +8,21 @@ const formatTime = (time: number) => String(time).padStart(2, "0");
 
 const MobileTimer = ({ hours = 0, minutes = 0, seconds = 0 }) => {
   return (
-    <div className="flex flex-col gap-3">
-      <div className="mr-8 flex items-center justify-start gap-1">
+    <div className="flex flex-col gap-2">
+      <div className="mr-8 flex items-center justify-start gap-0.5">
         <span className="bg-red h-1 w-1"></span>
-        <p className="font-inter text-center text-sm opacity-30">Time</p>
+        <p className="font-inter text-center text-xs opacity-30">Time</p>
       </div>
       <div className="flex items-center justify-center">
-        <div className="mr-1 flex flex-col items-center">
+        <div className="flex flex-col items-center">
           <p className="text-xl">{formatTime(hours)}</p>
         </div>
         <p className="text-xl">:</p>
-        <div className="mx-1 flex flex-col items-center">
+        <div className="flex flex-col items-center">
           <p className="text-xl">{formatTime(minutes)}</p>
         </div>
         <p className="text-xl">:</p>
-        <div className="ml-1 flex flex-col items-center">
+        <div className="flex flex-col items-center">
           <p className="text-xl">{formatTime(seconds)}</p>
         </div>
       </div>

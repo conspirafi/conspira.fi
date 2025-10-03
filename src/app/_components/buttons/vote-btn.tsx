@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@sglara/cn";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { useViewport } from "~/app/providers/ViewportProvider";
@@ -11,7 +12,7 @@ interface VoteBtnProps {
 }
 
 export default function VoteBtn(props: VoteBtnProps) {
-  const { isMobile } = useViewport();
+  const { isMobile, isDesktop } = useViewport();
   const btnForm = useMemo(() => {
     return props.side === "left"
       ? `matrix(1, 0, ${isMobile ? 0 : 0.2}, 1, 0, 0)`
@@ -21,7 +22,10 @@ export default function VoteBtn(props: VoteBtnProps) {
   const [play, setPlay] = useState(false);
   return (
     <motion.div
-      className="relative mt-1.5 cursor-pointer px-10 py-5 text-[21px] font-bold"
+      className={cn("relative mt-1.5 cursor-pointer px-10 py-5 font-bold", {
+        "text-[21px]": isDesktop,
+        "text-[16px]": isMobile,
+      })}
       initial="rest"
       whileHover="hover"
       whileTap="tap"

@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@sglara/cn";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   AxiomIcon,
   JupiterIcon,
@@ -22,7 +22,23 @@ interface StatsTableProps {
 
 const StatsTable: React.FC<StatsTableProps> = (props) => {
   const { isMobile, isDesktop } = useViewport();
+  const modalRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        isMobile &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        props.onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [props.onClose]);
   const activity = useMemo(() => {
     if (props.yesHistory?.historicalData && props.noHistory?.historicalData) {
       const prepareData = prepareTableData(
@@ -46,17 +62,23 @@ const StatsTable: React.FC<StatsTableProps> = (props) => {
   };
   return (
     <div
+      ref={modalRef}
       className={cn(
-        "bg-base-gray pointer-events-auto relative z-10 flex flex-col gap-8 rounded-2xl px-8 py-6 text-amber-50 backdrop-blur-[100px]",
-        { "min-w-[658px]": isDesktop, "w-full": isMobile },
+        "bg-base-gray pointer-events-auto relative z-10 flex flex-col rounded-2xl text-amber-50 backdrop-blur-[100px]",
+        {
+          "min-w-[658px gap-8 px-8 py-6": isDesktop,
+          "w-full gap-4 p-3": isMobile,
+        },
       )}
     >
-      <div
-        onClick={props.onClose}
-        className="absolute top-3 right-3 m-auto size-6 cursor-pointer rounded-full text-center text-[15px]"
-      >
-        <CloseIcon />
-      </div>
+      {isDesktop && (
+        <div
+          onClick={props.onClose}
+          className="absolute top-3 right-3 m-auto size-6 cursor-pointer rounded-full text-center text-[15px]"
+        >
+          <CloseIcon />
+        </div>
+      )}
 
       <div className="flex min-h-60 flex-col gap-4">
         <div

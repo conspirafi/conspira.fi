@@ -27,7 +27,7 @@ const OverlayMobile: React.FC<OverlayProps> = (props) => {
 
   return (
     <>
-      <div className="pointer-events-none fixed inset-0 z-10 flex h-full w-full flex-col p-[15px]">
+      <div className="pointer-events-none fixed inset-0 z-10 flex h-full w-full flex-col p-2.5">
         <div className="flex w-full flex-row items-center justify-between border-b border-white/20 pb-4">
           <div className="pointer-events-auto flex flex-col items-start">
             <h1 className="font-inter text-center text-[21px] opacity-30">
