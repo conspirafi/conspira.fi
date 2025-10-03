@@ -22,7 +22,7 @@ const Marketlink = ({ link = "" }) => {
           rel="noopener noreferrer"
           className="font-enhanced-led-board group transition-colorsborder-white pointer-events-auto inline-flex items-center justify-center gap-x-2 text-xl text-white underline underline-offset-2"
         >
-          Full
+          FULL
         </a>
         <div className="mb-1.5">
           <LinkIcon height={10} width={10} />

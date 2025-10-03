@@ -79,7 +79,7 @@ const OverlayMobile: React.FC<OverlayProps> = (props) => {
         <DiscoverElement />
       </div>
 
-      <div className="fixed top-1/2 left-1/2 -z-10 h-[80svh] w-[80svw] -translate-x-1/2 -translate-y-1/2">
+      <div className="fixed top-1/2 left-1/2 -z-10 h-[40svh] w-[100svw] -translate-x-1/2 -translate-y-1/2">
         <VideoPlayerWithEQ />
       </div>
     </>

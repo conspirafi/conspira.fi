@@ -51,7 +51,7 @@ const DiscoverElement = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <p className="font-enhanced-led-board mb-20 text-xl">
-              Scroll & Discover
+              SCROLL & DISCOVER
             </p>
           </motion.div>
         )}
