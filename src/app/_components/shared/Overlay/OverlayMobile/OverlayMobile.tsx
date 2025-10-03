@@ -11,6 +11,7 @@ import OverlaySoundBtn from "~/app/_components/buttons/overlay-sound-btn";
 import OverlaySocialBtn from "~/app/_components/buttons/overlay-social-btn";
 import VideoPlayerWithEQ from "~/app/_components/equalizer-stereo/video-player-with-eq";
 import MobileEventDetails from "./MobileEventDetails/MobileEventDetails";
+import { useViewport } from "~/app/providers/ViewportProvider";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -24,22 +25,24 @@ const transition = {
 
 const OverlayMobile: React.FC<OverlayProps> = (props) => {
   const activeEventCase = useEventCasesStore((state) => state.activeEventCase);
+  const { isMobile } = useViewport();
 
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-10 flex h-full w-full flex-col p-2.5">
-        <div className="flex w-full flex-row items-center justify-between border-b border-white/20 pb-4">
+        <div className="flex w-full flex-row items-center justify-between border-b border-white/20 pb-[15px]">
           <div className="pointer-events-auto flex flex-col items-start">
-            <h1 className="font-inter text-center text-[21px] opacity-30">
+            <h1 className="font-inter text-center text-[17px] opacity-30">
               Terminal
             </h1>
-            <p className="font-inter text-[21px]">{activeEventCase?.name}</p>
+            <p className="font-inter text-[17px]">{activeEventCase?.name}</p>
           </div>
           <div className="pointer-events-auto flex items-start justify-start gap-1">
-            <OverlaySoundBtn className="self-end" />
+            <OverlaySoundBtn className="h-10 w-10 self-end" />
             <OverlaySocialBtn
-              icon={<TwitterIcon />}
+              icon={<TwitterIcon size={isMobile ? 12 : 20} />}
               href="https://x.com/agent_mock"
+              className="h-10 w-10 self-end"
             />
           </div>
         </div>

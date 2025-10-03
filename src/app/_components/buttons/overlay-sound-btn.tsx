@@ -5,8 +5,10 @@ import VolumeOnIcon from "../icons/VolumeOnIcon";
 import VolumeOffIcon from "../icons/VolumeOffIcon";
 import { useVideo } from "~/app/providers/VideoProvider";
 import { useState } from "react";
+import { useViewport } from "~/app/providers/ViewportProvider";
 
 export default function OverlaySoundBtn({ className }: { className?: string }) {
+  const { isMobile } = useViewport();
   const { isMuted, toggleMute } = useVideo();
   const [flash, setFlash] = useState(false);
 
@@ -19,7 +21,7 @@ export default function OverlaySoundBtn({ className }: { className?: string }) {
   return (
     <motion.div
       onClick={handleClick}
-      className={`relative flex h-[52px] w-[52px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white/30 ${className}`}
+      className={`relative flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white/30 ${className}`}
       initial="rest"
       whileHover="hover"
       whileTap="tap"
@@ -54,7 +56,11 @@ export default function OverlaySoundBtn({ className }: { className?: string }) {
       )}
 
       <span className="relative z-10">
-        {isMuted ? <VolumeOffIcon /> : <VolumeOnIcon />}
+        {isMuted ? (
+          <VolumeOffIcon size={isMobile ? 12 : 24} />
+        ) : (
+          <VolumeOnIcon size={isMobile ? 12 : 24} />
+        )}
       </span>
     </motion.div>
   );

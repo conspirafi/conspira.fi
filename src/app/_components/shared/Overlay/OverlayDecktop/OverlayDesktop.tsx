@@ -102,10 +102,11 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
             <OverlaySocialBtn
               icon={<TwitterIcon />}
               href="https://x.com/agent_mock"
+              className="h-[52px] w-[52px]"
             />
           </div>
           <div className="pointer-events-auto flex flex-row gap-8">
-            <OverlaySoundBtn className="self-end" />
+            <OverlaySoundBtn className="h-[52px] w-[52px]" />
             <EqualizerStereo barCount={12} />
           </div>
         </div>
