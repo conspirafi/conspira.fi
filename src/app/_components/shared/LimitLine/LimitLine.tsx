@@ -3,12 +3,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-export interface LimitLineProps {
-  limit: number | undefined;
-  balance: number | undefined;
-  className?: string;
-}
-
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -18,10 +12,18 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
+export interface LimitLineProps {
+  limit: number | undefined;
+  balance: number | undefined;
+  className?: string;
+  isDesktop?: boolean;
+}
+
 export const LimitLine: React.FC<LimitLineProps> = ({
   limit = 0,
   balance = 0,
   className,
+  isDesktop = true,
 }) => {
   const balancePercentage =
     limit > 0 ? Math.min((balance / limit) * 100, 100) : 0;
@@ -37,7 +39,7 @@ export const LimitLine: React.FC<LimitLineProps> = ({
         <div className="flex items-end justify-between text-lg">
           <p className="w-[100px] text-base">Presale Limit</p>
           <div className="flex flex-col items-center">
-            <p className="font-inter mb-2 text-base font-normal text-white opacity-30">
+            <p className="font-inter mb-2 text-lg font-normal text-white opacity-30">
               Funded
             </p>
             <p className="font-enhanced-led-board text-shadow-glow text-[32px] leading-[50px]">

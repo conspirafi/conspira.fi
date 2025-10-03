@@ -4,16 +4,13 @@ import { useEventCasesStore } from "~/app/store/useEventStore";
 
 import type { OverlayProps } from "~/app/interfaces/overlay-interfaces";
 
-import { Borders } from "../Border";
-import EventTimer from "../../EventTimer/EventTimer";
 import EventDetails from "../../EventDetails/EventDetails";
-import VideoTimeline from "../../VideoTimeline/VideoTimeline";
 import TwitterIcon from "~/app/_components/icons/TwitterIcon";
 import DiscoverElement from "../../DiscoverElement/DiscoverElement";
 import OverlaySoundBtn from "~/app/_components/buttons/overlay-sound-btn";
 import OverlaySocialBtn from "~/app/_components/buttons/overlay-social-btn";
-import EqualizerStereo from "~/app/_components/equalizer-stereo/equalizer-stereo";
 import VideoPlayerWithEQ from "~/app/_components/equalizer-stereo/video-player-with-eq";
+import MobileEventDetails from "./MobileEventDetails/MobileEventDetails";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -46,8 +43,8 @@ const OverlayMobile: React.FC<OverlayProps> = (props) => {
             />
           </div>
         </div>
-        <div className="flex h-auto w-full flex-1 pt-9 pr-[42px] pl-6">
-          <div className="relative z-0 flex h-auto w-full flex-2">
+        <div className="flex h-auto w-full flex-1 flex-col gap-5 pt-4 pl-1.5">
+          <div className="relative z-0 flex h-auto w-full">
             <AnimatePresence mode="wait">
               {activeEventCase && (
                 <motion.div
@@ -67,36 +64,16 @@ const OverlayMobile: React.FC<OverlayProps> = (props) => {
               )}
             </AnimatePresence>
           </div>
-
-          {/* <div className="flex h-auto w-full flex-2 justify-end">
-            <AnimatePresence mode="wait">
-              {props.data?.end_date && (
-                <motion.div
-                  key={activeEventCase?.name}
-                  variants={contentVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  transition={transition}
-                >
-                  <EventTimer targetDateString={props.data.end_date} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div> */}
+          <div className="flex">
+            <MobileEventDetails
+              data={props.data}
+              activeEventCase={activeEventCase}
+            />
+          </div>
         </div>
 
         <DiscoverElement />
       </div>
-
-      {/* <div className="fixed top-1/2 z-20 flex h-auto w-full -translate-y-1/2 items-center justify-between pr-[42px] pl-6">
-        <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-start">
-          <VideoTimeline />
-        </div>
-        <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-end">
-          <EventSwitcherControls />
-        </div>
-      </div> */}
 
       <div className="fixed top-1/2 left-1/2 -z-10 h-[80svh] w-[80svw] -translate-x-1/2 -translate-y-1/2">
         <VideoPlayerWithEQ />

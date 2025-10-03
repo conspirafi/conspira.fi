@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, type Easing } from "framer-motion";
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import "./Overlay.scss";
 
@@ -18,7 +18,12 @@ const Overlay: React.FC<OverlayProps> = (props) => {
 
   return (
     <div className="overlay pointer-events-none relative z-0 flex h-screen w-screen items-center justify-center p-[15px]">
-      {isMobile && <OverlayMobile data={props.data}></OverlayMobile>}
+      {isMobile && (
+        <OverlayMobile
+          data={props.data}
+          marketFees={props.marketFees}
+        ></OverlayMobile>
+      )}
 
       {isDesktop && <OverlayDesktop data={props.data}></OverlayDesktop>}
       <AnimatePresence mode="wait">

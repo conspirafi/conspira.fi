@@ -2,6 +2,7 @@ import React from "react";
 
 import { useViewport } from "~/app/providers/ViewportProvider";
 import type { EventDetailsProps } from "~/app/interfaces/overlay-interfaces";
+import LinkIcon from "../../icons/LinkIcon";
 
 const InfoRow: React.FC<{
   label: string;
@@ -54,22 +55,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ title, spec, link }) => {
               className="group pointer-events-auto inline-flex items-center gap-x-2 border-b border-gray-500 pb-1 text-lg text-white transition-colors hover:border-white"
             >
               Prediciton market on PMX
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-              >
-                <path
-                  d="M1 11L11 1M11 1H1M11 1V11"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <LinkIcon />
             </a>
           </InfoRow>
         </>
