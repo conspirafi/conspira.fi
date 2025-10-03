@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { LoaderProvider } from "./providers/LoaderProvider";
 import { ApiDataProvider } from "./providers/apiDataProvider/ApiDataProvider";
+import { ViewportProvider } from "./providers/ViewportProvider";
 
 const siteUrl = "https://conspira.fi";
 const title = "Conspira.fi - Conspiracy Prediction Markets";
@@ -57,7 +58,9 @@ export default function RootLayout({
       <body>
         <TRPCReactProvider>
           <ApiDataProvider>
-            <LoaderProvider>{children}</LoaderProvider>
+            <ViewportProvider>
+              <LoaderProvider>{children}</LoaderProvider>
+            </ViewportProvider>
           </ApiDataProvider>
         </TRPCReactProvider>
       </body>
