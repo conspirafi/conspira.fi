@@ -1,20 +1,23 @@
 "use client";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useViewport } from "~/app/providers/ViewportProvider";
 
 interface VoteBtnProps {
   percent: string;
   type: "Yes" | "No";
   side: "left" | "right";
-  isMobile: boolean;
   onClick: () => void;
 }
 
 export default function VoteBtn(props: VoteBtnProps) {
-  const btnForm =
-    props.side === "left"
-      ? `matrix(1, 0, ${props.isMobile ? 0 : 0.2}, 1, 0, 0)`
-      : `matrix(1, 0, ${props.isMobile ? 0 : -0.2}, 1, 0, 0)`;
+  const { isMobile } = useViewport();
+  const btnForm = useMemo(() => {
+    return props.side === "left"
+      ? `matrix(1, 0, ${isMobile ? 0 : 0.2}, 1, 0, 0)`
+      : `matrix(1, 0, ${isMobile ? 0 : -0.2}, 1, 0, 0)`;
+  }, [isMobile]);
+
   const [play, setPlay] = useState(false);
   return (
     <motion.div

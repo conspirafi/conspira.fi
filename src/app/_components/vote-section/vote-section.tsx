@@ -27,7 +27,6 @@ export default function VoteSection(props: VoteSectionProps) {
           type="Yes"
           side="left"
           onClick={() => props.setHistoryType("Yes")}
-          isMobile
         />
         {!isMobile && (
           <div className="flex flex-col items-center gap-2">
@@ -47,7 +46,6 @@ export default function VoteSection(props: VoteSectionProps) {
           type="No"
           side="right"
           onClick={() => props.setHistoryType("No")}
-          isMobile
         />
       </div>
       {isMobile && (

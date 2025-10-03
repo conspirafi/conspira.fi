@@ -68,6 +68,7 @@ const OverlayMobile: React.FC<OverlayProps> = (props) => {
             <MobileEventDetails
               data={props.data}
               activeEventCase={activeEventCase}
+              marketFees={props.marketFees}
             />
           </div>
         </div>

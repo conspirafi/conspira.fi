@@ -65,8 +65,8 @@ const MobileEventDetails: React.FC<MobileEventDetailsProps> = (props) => {
         targetDateString={props?.data?.end_date || undefined}
         isDesktop={isDesktop}
       />
-      <Marketlink link="https://pmx.trade/markets/presale/will-comet-3iatlas-show-evidence-of-alien-technology-20250926084948" />
       <VolumeElement marketFees={props.marketFees || undefined} />
+      <Marketlink link="https://pmx.trade/markets/presale/will-comet-3iatlas-show-evidence-of-alien-technology-20250926084948" />
     </div>
   );
 };
