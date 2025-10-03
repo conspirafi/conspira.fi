@@ -1,15 +1,20 @@
 "use client";
-import { animate, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 
 interface VoteBtnProps {
   percent: string;
   type: "Yes" | "No";
   side: "left" | "right";
+  isMobile: boolean;
   onClick: () => void;
 }
 
 export default function VoteBtn(props: VoteBtnProps) {
+  const btnForm =
+    props.side === "left"
+      ? `matrix(1, 0, ${props.isMobile ? 0 : 0.2}, 1, 0, 0)`
+      : `matrix(1, 0, ${props.isMobile ? 0 : -0.2}, 1, 0, 0)`;
   const [play, setPlay] = useState(false);
   return (
     <motion.div
@@ -45,8 +50,8 @@ export default function VoteBtn(props: VoteBtnProps) {
       onAnimationComplete={() => setPlay(false)}
     >
       <div className="pointer-events-none relative z-20 flex gap-1.5">
-        <span className="">{props.type.toUpperCase()}</span>
-        <span className="">{props.percent}</span>
+        <span>{props.type.toUpperCase()}</span>
+        <span>{props.percent}</span>
       </div>
 
       <motion.div
@@ -101,10 +106,7 @@ export default function VoteBtn(props: VoteBtnProps) {
         }}
         variants={{
           rest: {
-            transform:
-              props.side === "left"
-                ? "matrix(1, 0, 0.2, 1, 0, 0)"
-                : "matrix(1, 0, -0.2, 1, 0, 0)",
+            transform: btnForm,
           },
         }}
       />
