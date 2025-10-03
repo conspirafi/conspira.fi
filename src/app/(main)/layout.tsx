@@ -1,4 +1,4 @@
-import DesktopOnlyGuard from "../_components/guards/DesktopOnlyGuard";
+// import DesktopOnlyGuard from "../_components/guards/DesktopOnlyGuard";
 
 export default function MainLayout({
   children,
@@ -6,8 +6,8 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <DesktopOnlyGuard>
-      <main className="relative">{children}</main>
-    </DesktopOnlyGuard>
+    // <DesktopOnlyGuard>
+    <main className="relative">{children}</main>
+    // </DesktopOnlyGuard>
   );
 }
