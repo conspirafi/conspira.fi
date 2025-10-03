@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./loader.scss";
 import { useLoader } from "~/app/providers/LoaderProvider";
+import { useViewport } from "~/app/providers/ViewportProvider";
 
 const Loader = () => {
   const messages = [
@@ -64,13 +65,22 @@ const Loader = () => {
   const startedRef = useRef(false);
   const mountedRef = useRef(true);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const activatedRef = useRef(false);
 
   const TYPING_SPEED = 10;
   const SPINNER_SPEED = 45;
 
   const { setIsLoading, setIsEntered } = useLoader();
+  const { isMobile } = useViewport();
 
-  const ctaText = "Press SPACE to reveal the signal";
+  const ctaText = isMobile
+    ? "TOUCH to enter website"
+    : "Press SPACE to reveal the signal";
+  const highlightWord = isMobile ? "TOUCH" : "SPACE";
+  const beforeHighlight = ctaText.substring(0, ctaText.indexOf(highlightWord));
+  const afterHighlight = ctaText.substring(
+    ctaText.indexOf(highlightWord) + highlightWord.length,
+  );
 
   useEffect(() => {
     if (!isSpinning) {
@@ -89,18 +99,18 @@ const Loader = () => {
     return () => clearInterval(interval);
   }, [isSpinning]);
 
-  const handleSpaceActivation = () => {
-    if (ctaFinished) {
-      setIsFlashing(true);
-      setIsEntered(true);
-    }
+  const handleActivation = () => {
+    if (activatedRef.current || !ctaFinished) return;
+    activatedRef.current = true;
+    setIsFlashing(true);
+    setIsEntered(true);
   };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "Space" && ctaFinished) {
+      if (event.code === "Space") {
         event.preventDefault();
-        handleSpaceActivation();
+        handleActivation();
       }
     };
 
@@ -110,6 +120,35 @@ const Loader = () => {
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [ctaFinished]);
+
+  useEffect(() => {
+    const handleClick = () => {
+      handleActivation();
+    };
+
+    if (ctaFinished) {
+      window.addEventListener("click", handleClick);
+    }
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+  }, [ctaFinished]);
+
+  useEffect(() => {
+    const handleTouch = (e: TouchEvent) => {
+      e.preventDefault();
+      handleActivation();
+    };
+
+    if (ctaFinished) {
+      window.addEventListener("touchstart", handleTouch);
+    }
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouch);
     };
   }, [ctaFinished]);
 
@@ -265,14 +304,6 @@ const Loader = () => {
 
       await sleep(200);
       setShowCTA(true);
-
-      for (const char of ctaText) {
-        if (!mountedRef.current) return;
-        setCurrentCTAText((prev) => prev + char);
-        await sleep(TYPING_SPEED);
-      }
-
-      setCTAFinished(true);
     })();
 
     return () => {
@@ -280,16 +311,82 @@ const Loader = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!showCTA || ctaFinished) return;
+
+    const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+    (async () => {
+      setCurrentCTAText("");
+      for (const char of ctaText) {
+        if (!mountedRef.current) return;
+        setCurrentCTAText((prev) => prev + char);
+        await sleep(TYPING_SPEED);
+      }
+      setCTAFinished(true);
+    })();
+  }, [showCTA, ctaText]);
+
+  const renderCTAText = () => {
+    if (ctaFinished) {
+      return (
+        <>
+          {beforeHighlight}
+          <span className="loader__rainbow-text font-[Enhanced_Led_Board]">
+            {highlightWord}
+          </span>
+          {afterHighlight}
+        </>
+      );
+    }
+
+    const lenBefore = beforeHighlight.length;
+    const lenHighlight = highlightWord.length;
+    const currentLen = currentCTAText.length;
+
+    if (currentLen <= lenBefore) {
+      return (
+        <>
+          {currentCTAText}
+          <span className="loader__cursor" aria-hidden />
+        </>
+      );
+    } else if (currentLen <= lenBefore + lenHighlight) {
+      const typedHighlight = currentCTAText.substring(lenBefore);
+      return (
+        <>
+          {beforeHighlight}
+          <span className="loader__rainbow-text font-[Enhanced_Led_Board]">
+            {typedHighlight}
+          </span>
+          <span className="loader__cursor" aria-hidden />
+        </>
+      );
+    } else {
+      const typedAfter = currentCTAText.substring(lenBefore + lenHighlight);
+      return (
+        <>
+          {beforeHighlight}
+          <span className="loader__rainbow-text font-[Enhanced_Led_Board]">
+            {highlightWord}
+          </span>
+          {typedAfter}
+          <span className="loader__cursor" aria-hidden />
+        </>
+      );
+    }
+  };
+
   return (
     <div
-      className={`loader flex h-screen w-full flex-col items-center justify-center p-4 font-[BB_Manual_Mono_Pro_Original] text-white ${isTransparent ? "bg-transparent" : "bg-black"}`}
+      className={`loader flex h-screen w-full flex-col items-center justify-center p-4 font-[IBM_Plex_Mono] text-white ${isTransparent ? "bg-transparent" : "bg-black"}`}
     >
       <div className={showContent ? "flex flex-col items-center" : "hidden"}>
         <h1 className="mb-[28px] text-center font-[Hudson_NY_Pro] text-[50px]">
           CONSPIRA.FI
         </h1>
         <div
-          className="w-full max-w-[300px] overflow-hidden rounded-md bg-black p-4"
+          className="w-[310px] overflow-hidden rounded-md bg-black p-4"
           style={{ fontSize: 11 }}
         >
           <div style={{ width: "100%", whiteSpace: "pre-wrap" }}>
@@ -342,38 +439,7 @@ const Loader = () => {
             <div
               style={{ fontSize: 21, whiteSpace: "nowrap", minHeight: "25px" }}
             >
-              {currentCTAText.replace(/SPACE/g, "").length > 0 && (
-                <>
-                  {currentCTAText.substring(
-                    0,
-                    currentCTAText.indexOf("SPACE") !== -1
-                      ? currentCTAText.indexOf("SPACE")
-                      : currentCTAText.length,
-                  )}
-                  {currentCTAText.includes("SPACE") && (
-                    <span
-                      className="loader__rainbow-text cursor-pointer"
-                      onClick={handleSpaceActivation}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          handleSpaceActivation();
-                        }
-                      }}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      SPACE
-                    </span>
-                  )}
-                  {currentCTAText.indexOf("SPACE") !== -1 &&
-                    currentCTAText.length >
-                      currentCTAText.indexOf("SPACE") + 5 &&
-                    currentCTAText.substring(
-                      currentCTAText.indexOf("SPACE") + 5,
-                    )}
-                </>
-              )}
-              {!ctaFinished && <span className="loader__cursor" aria-hidden />}
+              {renderCTAText()}
             </div>
           </div>
         )}
