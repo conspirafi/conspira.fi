@@ -85,7 +85,7 @@ export function CloseIcon() {
 export function PmxIcon() {
   return (
     <svg
-      width="44"
+      width="43"
       height="12"
       viewBox="0 0 44 12"
       fill="none"

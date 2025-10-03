@@ -112,7 +112,7 @@ const LineChart = (props: LineChartProps) => {
     <div
       style={{
         width: "100%",
-        maxWidth: "230px",
+        maxWidth: "278px",
         height: "41px",
         margin: "24px auto",
       }}
