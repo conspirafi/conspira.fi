@@ -244,8 +244,6 @@ const Loader = () => {
 
             const isVideoItem = item === "alien_signals.mp4";
 
-            console.log("videoLoadedRef.current", videoLoadedRef.current);
-
             if (waitForVideo && isVideoItem) {
               while (!videoLoadedRef.current && mountedRef.current) {
                 await sleep(100);

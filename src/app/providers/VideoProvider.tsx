@@ -91,10 +91,6 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({
     videoElement.volume = 0.5;
     videoElement.muted = isMuted;
 
-    videoElement
-      .play()
-      .catch((e) => console.error("Autoplay failed in provider:", e));
-
     return () => {
       videoElement.removeEventListener("loadedmetadata", handleLoadedMetadata);
       videoElement.removeEventListener("timeupdate", handleTimeUpdate);
