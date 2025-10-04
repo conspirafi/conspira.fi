@@ -1,6 +1,8 @@
 "use client";
-import { animate, motion } from "framer-motion";
-import { useState } from "react";
+import { cn } from "@sglara/cn";
+import { motion } from "framer-motion";
+import { useMemo, useState } from "react";
+import { useViewport } from "~/app/providers/ViewportProvider";
 
 interface VoteBtnProps {
   percent: string;
@@ -10,10 +12,20 @@ interface VoteBtnProps {
 }
 
 export default function VoteBtn(props: VoteBtnProps) {
+  const { isMobile, isDesktop } = useViewport();
+  const btnForm = useMemo(() => {
+    return props.side === "left"
+      ? `matrix(1, 0, ${isMobile ? 0 : 0.2}, 1, 0, 0)`
+      : `matrix(1, 0, ${isMobile ? 0 : -0.2}, 1, 0, 0)`;
+  }, [isMobile]);
+
   const [play, setPlay] = useState(false);
   return (
     <motion.div
-      className="relative mt-1.5 cursor-pointer px-10 py-5 text-[21px] font-bold"
+      className={cn("relative mt-1.5 cursor-pointer px-10 py-5 font-bold", {
+        "text-[21px]": isDesktop,
+        "text-[16px]": isMobile,
+      })}
       initial="rest"
       whileHover="hover"
       whileTap="tap"
@@ -45,8 +57,8 @@ export default function VoteBtn(props: VoteBtnProps) {
       onAnimationComplete={() => setPlay(false)}
     >
       <div className="pointer-events-none relative z-20 flex gap-1.5">
-        <span className="">{props.type.toUpperCase()}</span>
-        <span className="">{props.percent}</span>
+        <span>{props.type.toUpperCase()}</span>
+        <span>{props.percent}</span>
       </div>
 
       <motion.div
@@ -101,10 +113,7 @@ export default function VoteBtn(props: VoteBtnProps) {
         }}
         variants={{
           rest: {
-            transform:
-              props.side === "left"
-                ? "matrix(1, 0, 0.2, 1, 0, 0)"
-                : "matrix(1, 0, -0.2, 1, 0, 0)",
+            transform: btnForm,
           },
         }}
       />

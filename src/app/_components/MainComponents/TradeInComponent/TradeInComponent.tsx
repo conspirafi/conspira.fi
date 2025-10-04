@@ -10,6 +10,8 @@ import type {
 } from "~/server/schemas";
 import { useMemo, useState } from "react";
 import { roundToTwoDecimals } from "~/app/utils/math";
+import { useViewport } from "~/app/providers/ViewportProvider";
+import { cn } from "@sglara/cn";
 
 interface TradeInProps {
   yesHistory: IMarketHistory | undefined;
@@ -34,6 +36,7 @@ function splitData(
 }
 
 export const TradeInComponent = (props: TradeInProps) => {
+  const { isMobile, isDesktop } = useViewport();
   const [showTable, setShowTable] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState<{
     labels: string[];
@@ -93,7 +96,12 @@ export const TradeInComponent = (props: TradeInProps) => {
   };
 
   return (
-    <div className="pointer-events-none z-40 flex h-screen w-full flex-col items-center justify-end gap-[21px] p-[15px]">
+    <div
+      className={cn(
+        "pointer-events-none z-40 flex h-screen w-full flex-col items-center justify-end gap-[16px]",
+        { "p-2.5": isMobile, "p-[15px]": isDesktop },
+      )}
+    >
       {showTable && (
         <>
           <StatsTable

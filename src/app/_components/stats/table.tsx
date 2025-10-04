@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@sglara/cn";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   AxiomIcon,
   JupiterIcon,
@@ -10,6 +10,8 @@ import {
 } from "./statsIcons";
 import type { IMarketHistory } from "~/server/schemas";
 import { prepareTableData, type Activity } from "~/app/utils/tableUtils";
+import { useViewport } from "~/app/providers/ViewportProvider";
+import PlatformButton from "../buttons/platform-btn";
 
 interface StatsTableProps {
   marketSlug: string;
@@ -19,6 +21,24 @@ interface StatsTableProps {
 }
 
 const StatsTable: React.FC<StatsTableProps> = (props) => {
+  const { isMobile, isDesktop } = useViewport();
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        isMobile &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        props.onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [props.onClose]);
   const activity = useMemo(() => {
     if (props.yesHistory?.historicalData && props.noHistory?.historicalData) {
       const prepareData = prepareTableData(
@@ -30,7 +50,7 @@ const StatsTable: React.FC<StatsTableProps> = (props) => {
     return [];
   }, [props.yesHistory, props.noHistory]);
 
-  const openTrade = (type: "PMX" | "JUPITER" | "AXIOM") => {
+  const openTrade = (type: "PMX" | "JUPITER") => {
     switch (type) {
       case "PMX":
         window.open(`https://pmx.trade/markets/${props.marketSlug}`);
@@ -38,31 +58,55 @@ const StatsTable: React.FC<StatsTableProps> = (props) => {
       case "JUPITER":
         window.open("https://pmx.trade/markets/");
         break;
-      case "AXIOM":
-        window.open("https://pmx.trade/markets/");
-        break;
     }
   };
   return (
-    <div className="bg-base-gray pointer-events-auto relative z-10 flex min-w-[658px] flex-col gap-8 rounded-2xl px-8 py-6 text-amber-50 backdrop-blur-[100px]">
-      <div
-        onClick={props.onClose}
-        className="absolute top-3 right-3 m-auto size-6 cursor-pointer rounded-full text-center text-[15px]"
-      >
-        <CloseIcon />
-      </div>
+    <div
+      ref={modalRef}
+      className={cn(
+        "bg-base-gray pointer-events-auto relative z-10 flex flex-col rounded-2xl text-amber-50 backdrop-blur-[100px]",
+        {
+          "min-w-[658px gap-8 px-8 py-6": isDesktop,
+          "w-full gap-4 p-3": isMobile,
+        },
+      )}
+    >
+      {isDesktop && (
+        <div
+          onClick={props.onClose}
+          className="absolute top-3 right-3 m-auto size-6 cursor-pointer rounded-full text-center text-[15px]"
+        >
+          <CloseIcon />
+        </div>
+      )}
+
       <div className="flex min-h-60 flex-col gap-4">
-        <div className="grid grid-cols-[repeat(2,1fr)_180px_minmax(70px,auto)] justify-start text-left text-[0.75rem] font-normal text-white/30">
-          <div>Lastest activity</div>
-          <div>Procent</div>
-          <div>Profit</div>
+        <div
+          className={cn(
+            "grid justify-start text-left text-[0.75rem] font-normal text-white/30",
+            {
+              "grid-cols-[repeat(2,1fr)_180px_minmax(70px,auto)]": isDesktop,
+              "grid-cols-[repeat(2,1fr)_22vw_minmax(17vw,auto)]": isMobile,
+            },
+          )}
+        >
+          <div>Lastest</div>
+          <div>Probability</div>
+          <div>Price</div>
           <div>Time</div>
         </div>
         <div className="min-h-60">
           {activity.map((item, idx) => (
             <div
               key={idx}
-              className="mb-2 grid grid-cols-[repeat(2,1fr)_180px_minmax(70px,auto)] justify-start text-left text-[0.75rem]"
+              className={cn(
+                "mb-2 grid justify-start text-left text-[0.75rem]",
+                {
+                  "grid-cols-[repeat(2,1fr)_180px_minmax(70px,auto)]":
+                    isDesktop,
+                  "grid-cols-[repeat(2,1fr)_22vw_minmax(17vw,auto)]": isMobile,
+                },
+              )}
             >
               <div className="flex text-left">
                 <div
@@ -92,28 +136,26 @@ const StatsTable: React.FC<StatsTableProps> = (props) => {
           ))}
         </div>
       </div>
-      <div className="grid h-12 grid-cols-3 place-items-center gap-3.5 text-[0.75rem] text-nowrap">
-        <div
+      <div className="grid h-12 grid-cols-2 place-items-center gap-2 text-[0.75rem] text-nowrap">
+        {/* <div
           onClick={() => openTrade("PMX")}
-          className="bg-base-dark-gray m-auto flex h-full w-[188px] cursor-pointer items-center justify-center gap-3.5 rounded-xl border-1 border-white/10"
+          className="bg-base-dark-gray flex h-full w-full cursor-pointer items-center justify-center gap-3.5 rounded-xl border-1 border-white/10"
         >
           <PmxIcon />
           Trade om PMX
-        </div>
-        <div
-          onClick={() => openTrade("JUPITER")}
-          className="bg-base-blue flex h-full w-[188px] cursor-pointer items-center justify-center gap-3.5 rounded-xl border-1 border-white/10"
-        >
-          <JupiterIcon />
-          <span>Trade on Jupiter</span>
-        </div>
-        <div
-          onClick={() => openTrade("AXIOM")}
-          className="bg-base-black flex h-full w-[188px] cursor-pointer items-center justify-center gap-3.5 rounded-xl border-1 border-white/10"
-        >
-          <AxiomIcon />
-          <span>Trade on Axiom</span>
-        </div>
+        </div> */}
+        <PlatformButton
+          icon={<PmxIcon />}
+          text="Trade om PMX"
+          click={() => openTrade("PMX")}
+          styles="bg-base-dark-gray"
+        />
+        <PlatformButton
+          icon={<JupiterIcon />}
+          text="Trade on Jupiter"
+          click={() => openTrade("JUPITER")}
+          styles="bg-base-blue border-white/10"
+        />
       </div>
     </div>
   );

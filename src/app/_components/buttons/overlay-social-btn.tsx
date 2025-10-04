@@ -6,11 +6,13 @@ import { motion } from "framer-motion";
 interface OverlaySocialBtnProps {
   icon: React.ReactNode;
   href: string;
+  className?: string;
 }
 
 export default function OverlaySocialBtn({
   icon,
   href,
+  className,
 }: OverlaySocialBtnProps) {
   const [flash, setFlash] = useState(false);
 
@@ -25,7 +27,7 @@ export default function OverlaySocialBtn({
   return (
     <motion.div
       onClick={handleClick}
-      className="relative flex h-[52px] w-[52px] cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white/30"
+      className={`relative flex cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white/30 ${className}`}
       initial="rest"
       whileHover="hover"
       whileTap="tap"
