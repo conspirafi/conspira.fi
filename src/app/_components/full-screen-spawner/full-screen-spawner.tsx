@@ -34,6 +34,12 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
   const targetVelocity = useRef(0);
   const animationFrame = useRef<number | null>(null);
 
+  const touchStartY = useRef<number | null>(null);
+  const touchStartTime = useRef<number | null>(null);
+  const lastTouchY = useRef<number | null>(null);
+  const lastTouchTime = useRef<number | null>(null);
+  const touchVelocity = useRef(0);
+
   const BASE_AUTOPLAY_VELOCITY = 0.0019;
 
   useEffect(() => {
@@ -114,9 +120,76 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
       );
     };
 
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      touchStartY.current = touch.clientY;
+      touchStartTime.current = Date.now();
+      lastTouchY.current = touch.clientY;
+      lastTouchTime.current = Date.now();
+      touchVelocity.current = 0;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (touchStartY.current === null || lastTouchY.current === null) return;
+
+      const touch = e.touches[0];
+      const currentY = touch.clientY;
+      const currentTime = Date.now();
+
+      if (lastTouchTime.current !== null) {
+        const timeDelta = currentTime - lastTouchTime.current;
+        if (timeDelta > 0) {
+          const distance = currentY - lastTouchY.current;
+          touchVelocity.current = distance / timeDelta;
+        }
+      }
+
+      const totalDistance = currentY - touchStartY.current;
+      const normalizedDistance = totalDistance / 300;
+
+      targetVelocity.current = -normalizedDistance * 0.02;
+      targetVelocity.current = Math.max(
+        -0.05,
+        Math.min(0.05, targetVelocity.current),
+      );
+
+      lastTouchY.current = currentY;
+      lastTouchTime.current = currentTime;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (touchStartY.current === null || touchStartTime.current === null)
+        return;
+
+      const currentTime = Date.now();
+      const timeDelta = currentTime - touchStartTime.current;
+
+      if (timeDelta < 300 && Math.abs(touchVelocity.current) > 0.2) {
+        const momentum = -touchVelocity.current * 0.05;
+        targetVelocity.current += momentum;
+        targetVelocity.current = Math.max(
+          -0.05,
+          Math.min(0.05, targetVelocity.current),
+        );
+      }
+
+      touchStartY.current = null;
+      touchStartTime.current = null;
+      lastTouchY.current = null;
+      lastTouchTime.current = null;
+      touchVelocity.current = 0;
+    };
+
     window.addEventListener("wheel", handleWheel, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
     return () => {
       window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
       pendingSpawns.current.forEach(clearTimeout);
       if (animationFrame.current) {
         cancelAnimationFrame(animationFrame.current);
