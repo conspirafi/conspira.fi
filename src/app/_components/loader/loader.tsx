@@ -23,15 +23,11 @@ const Loader = () => {
       items: ["deep_state.db", "ufosightings.csv", "mkultra_notes.txt"],
       spinner: true,
     },
-    // {
-    //   text: "Booting Agent Mock interface...",
-    //   items: ["mock_agent.sys", "mock_signal_feed.txt", "burn_counter.dat"],
-    //   spinner: true,
-    // },
     {
       text: "Preparing first signal...",
       items: ["atlas_3I_logs.bin", "alien_signals.mp4"],
       spinner: true,
+      waitForVideo: true,
     },
   ];
 
@@ -66,6 +62,7 @@ const Loader = () => {
   const mountedRef = useRef(true);
   const overlayRef = useRef<HTMLDivElement>(null);
   const activatedRef = useRef(false);
+  const videoLoadedRef = useRef(false);
 
   const TYPING_SPEED = 10;
   const SPINNER_SPEED = 45;
@@ -81,6 +78,24 @@ const Loader = () => {
   const afterHighlight = ctaText.substring(
     ctaText.indexOf(highlightWord) + highlightWord.length,
   );
+
+  useEffect(() => {
+    const video = document.createElement("video");
+    video.preload = "auto";
+    video.src = "/3I Atlas optmizide.mp4";
+
+    const handleCanPlayThrough = () => {
+      videoLoadedRef.current = true;
+    };
+
+    video.addEventListener("canplaythrough", handleCanPlayThrough);
+    video.load();
+
+    return () => {
+      video.removeEventListener("canplaythrough", handleCanPlayThrough);
+      video.src = "";
+    };
+  }, []);
 
   useEffect(() => {
     if (!isSpinning) {
@@ -200,7 +215,7 @@ const Loader = () => {
 
         const message = messages[i];
         if (!message) return;
-        const { text, items, spinner } = message;
+        const { text, items, spinner, waitForVideo } = message;
 
         setIsSpinning(spinner);
 
@@ -223,8 +238,20 @@ const Loader = () => {
         }
 
         if (items.length > 0) {
-          for (const item of items) {
+          for (let itemIdx = 0; itemIdx < items.length; itemIdx++) {
+            const item = items[itemIdx];
             if (!mountedRef.current) return;
+
+            const isVideoItem = item === "alien_signals.mp4";
+
+            console.log("videoLoadedRef.current", videoLoadedRef.current);
+
+            if (waitForVideo && isVideoItem) {
+              while (!videoLoadedRef.current && mountedRef.current) {
+                await sleep(100);
+              }
+            }
+
             setCurrentLine("");
 
             const startProgress = Math.round(
