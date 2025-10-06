@@ -1,15 +1,9 @@
 "use client";
 import { cn } from "@sglara/cn";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  AxiomIcon,
-  JupiterIcon,
-  ArrowUpRight,
-  PmxIcon,
-  CloseIcon,
-} from "./statsIcons";
+import React, { useEffect, useMemo, useRef } from "react";
+import { JupiterIcon, PmxIcon, CloseIcon } from "./statsIcons";
 import type { IMarketHistory } from "~/server/schemas";
-import { prepareTableData, type Activity } from "~/app/utils/tableUtils";
+import { prepareTableData } from "~/app/utils/tableUtils";
 import { useViewport } from "~/app/providers/ViewportProvider";
 import PlatformButton from "../buttons/platform-btn";
 

@@ -23,7 +23,6 @@ export const LimitLine: React.FC<LimitLineProps> = ({
   limit = 0,
   balance = 0,
   className,
-  isDesktop = true,
 }) => {
   const balancePercentage =
     limit > 0 ? Math.min((balance / limit) * 100, 100) : 0;

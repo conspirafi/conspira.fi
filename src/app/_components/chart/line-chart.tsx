@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -18,7 +18,6 @@ interface LineChartProps {
   values: number[];
 }
 
-// Реєструємо необхідні компоненти Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -38,38 +37,35 @@ const createGradient = (
     chartArea.right,
     0,
   );
-  // Старіші дані (зліва) — темніші та прозоріші
   gradient.addColorStop(0, "rgba(97, 196, 84, 0.3)");
-  // Новіші дані (справа) — світліші та насиченіші
   gradient.addColorStop(1, "rgba(97, 196, 84, 1)");
   return gradient;
 };
 const LineChart = (props: LineChartProps) => {
   const { labels, values } = props;
 
-  // Дані для графіку
   const data = {
     labels,
     datasets: [
       {
         data: values,
-        borderWidth: 2, // Тонша лінія для різкості
-        tension: 0, // Плавність ліній
-        pointRadius: 0, // Чіткі точки
-        pointBackgroundColor: "rgba(97, 196, 84, 1)", // Колір точок
-        pointBorderColor: "rgb(0, 100, 0)", // Контур точок
+        borderWidth: 2,
+        tension: 0,
+        pointRadius: 0,
+        pointBackgroundColor: "rgba(97, 196, 84, 1)",
+        pointBorderColor: "rgb(0, 100, 0)",
         borderColor: (context: {
           chart: { ctx: CanvasRenderingContext2D; chartArea?: ChartArea };
         }) => {
           const { ctx, chartArea } = context.chart;
-          if (!chartArea) return "rgba(97, 196, 84, 1)"; // Початковий колір, якщо chartArea не доступна
+          if (!chartArea) return "rgba(97, 196, 84, 1)";
           return createGradient(ctx, chartArea);
         },
         backgroundColor: (context: {
           chart: { ctx: CanvasRenderingContext2D; chartArea?: ChartArea };
         }) => {
           const { ctx, chartArea } = context.chart;
-          if (!chartArea) return "rgba(97, 196, 84, 0.2)"; // Початкове заповнення
+          if (!chartArea) return "rgba(97, 196, 84, 0.2)";
           return createGradient(ctx, chartArea);
         },
       },
@@ -78,32 +74,32 @@ const LineChart = (props: LineChartProps) => {
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, // Контроль розміру
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false, // Ховаємо легенду
+        display: false,
       },
       title: {
-        display: false, // Ховаємо заголовок
+        display: false,
       },
       tooltip: {
-        enabled: false, // Ховаємо підказки
+        enabled: false,
       },
     },
     scales: {
       x: {
-        display: false, // Ховаємо вісь X (мітки та сітку)
+        display: false,
       },
       y: {
-        display: false, // Ховаємо вісь Y (мітки та сітку)
+        display: false,
       },
     },
     elements: {
       line: {
-        borderJoinStyle: "miter" as const, // Різкі з'єднання
+        borderJoinStyle: "miter" as const,
       },
       point: {
-        pointStyle: "circle", // Круглі точки
+        pointStyle: "circle",
       },
     },
   };

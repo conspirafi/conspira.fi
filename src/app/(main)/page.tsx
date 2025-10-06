@@ -1,4 +1,4 @@
-import { api, HydrateClient } from "~/trpc/server";
+import { HydrateClient } from "~/trpc/server";
 
 import HomeComponent from "../_components/MainComponents/HomeComponent/HomeComponent";
 import { VideoProvider } from "../providers/VideoProvider";

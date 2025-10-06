@@ -60,23 +60,23 @@ function truncate(num: number, decimals: number): number {
   return Math.floor(num * factor) / factor;
 }
 
-function findClosestPrice(
-  priceMap: Map<string, number>,
-  targetTimestamp: string,
-): number | null {
-  const targetDate = new Date(targetTimestamp);
-  let closestPrice: number | null = null;
-  let minDiff = Infinity;
+// function findClosestPrice(
+//   priceMap: Map<string, number>,
+//   targetTimestamp: string,
+// ): number | null {
+//   const targetDate = new Date(targetTimestamp);
+//   let closestPrice: number | null = null;
+//   let minDiff = Infinity;
 
-  for (const [ts, price] of priceMap) {
-    const diff = Math.abs(new Date(ts).getTime() - targetDate.getTime());
-    if (diff < minDiff && diff <= 60000) {
-      minDiff = diff;
-      closestPrice = price;
-    }
-  }
-  return closestPrice;
-}
+//   for (const [ts, price] of priceMap) {
+//     const diff = Math.abs(new Date(ts).getTime() - targetDate.getTime());
+//     if (diff < minDiff && diff <= 60000) {
+//       minDiff = diff;
+//       closestPrice = price;
+//     }
+//   }
+//   return closestPrice;
+// }
 
 function timeAgo(timestamp: number | string): string {
   const now = Date.now();

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import WhiteArrowIcon from "../icons/WhiteArrowIcon";
 
 export interface TwitterCardProps {
@@ -28,7 +29,7 @@ export default function TwitterCard({
     >
       <div className="content transition-[filter] duration-300 group-hover:blur-lg">
         <div className="mb-4 flex items-center gap-2.75">
-          <img
+          <Image
             src={avatar}
             alt={name}
             width={33}
