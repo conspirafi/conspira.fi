@@ -122,6 +122,8 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
 
     const handleTouchStart = (e: TouchEvent) => {
       const touch = e.touches[0];
+      if (!touch) return;
+
       touchStartY.current = touch.clientY;
       touchStartTime.current = Date.now();
       lastTouchY.current = touch.clientY;
@@ -133,6 +135,8 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
       if (touchStartY.current === null || lastTouchY.current === null) return;
 
       const touch = e.touches[0];
+      if (!touch) return;
+
       const currentY = touch.clientY;
       const currentTime = Date.now();
 
@@ -157,7 +161,7 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
       lastTouchTime.current = currentTime;
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
+    const handleTouchEnd = () => {
       if (touchStartY.current === null || touchStartTime.current === null)
         return;
 

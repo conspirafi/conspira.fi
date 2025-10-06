@@ -9,7 +9,7 @@ const MarketImageSchema = z.object({
   size: z.number(),
 });
 
-const PresaleMarketDetailsSchema = z.object({
+export const PresaleMarketDetailsSchema = z.object({
   balance: z.number(),
   created_at: z.string(),
   creator_address: z.string(),
@@ -78,7 +78,7 @@ const MetadataSchema = z.object({
   created_at: z.string().datetime({ offset: true }),
 });
 
-const MarketSchema = z.object({
+export const MarketSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   description: z.string(),
@@ -117,7 +117,7 @@ const MarketHistoricalDataSchema = z.object({
   volume: z.number(),
 });
 
-const MarketHistoryPricesSchema = z.object({
+export const MarketHistoryPricesSchema = z.object({
   count: z.number(),
   hasCurrentPrice: z.boolean(),
   historicalData: z.array(MarketHistoricalDataSchema),
@@ -147,7 +147,7 @@ const PositionFeesSchema = z.array(
 );
 
 // Main schema
-const PlatformFeesSchema = z.object({
+export const PlatformFeesSchema = z.object({
   success: z.boolean(),
   message: z.string(),
   marketSlug: z.string(),

@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from "axios";
+import axios from "axios";
 
 export const pmxApiClient = axios.create({
   baseURL: process.env.PMX_BASE_URL,

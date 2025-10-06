@@ -7,8 +7,8 @@ import { cn } from "@sglara/cn";
 const DiscoverElement = () => {
   const { isMobile, isDesktop } = useViewport();
   const [hasScrolled, setHasScrolled] = useState(false);
-  const touchStartY = useRef(null);
-  const touchEndY = useRef(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchEndY = useRef<number | null>(null);
 
   useEffect(() => {
     const handleWheel = () => {
@@ -17,12 +17,14 @@ const DiscoverElement = () => {
       }
     };
 
-    const handleTouchStart = (e) => {
-      touchStartY.current = e.touches[0].clientY;
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (touch) touchStartY.current = touch.clientY;
     };
 
-    const handleTouchMove = (e) => {
-      touchEndY.current = e.touches[0].clientY;
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (touch) touchEndY.current = touch.clientY;
     };
 
     const handleTouchEnd = () => {

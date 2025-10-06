@@ -112,7 +112,7 @@ const Loader = () => {
     }, SPINNER_SPEED);
 
     return () => clearInterval(interval);
-  }, [isSpinning]);
+  }, [isSpinning, spinnerFrames]);
 
   const handleActivation = () => {
     if (activatedRef.current || !ctaFinished) return;
@@ -192,7 +192,7 @@ const Loader = () => {
         { once: true },
       );
     }
-  }, [isShrinking]);
+  }, [isShrinking, setIsLoading]);
 
   useEffect(() => {
     if (startedRef.current) return;
@@ -210,11 +210,11 @@ const Loader = () => {
         .reduce((acc, msg) => acc + Math.max(1, msg.items.length), 0);
       let currentItemIndex = 0;
 
-      for (let i = 0; i < messages.length; i++) {
+      for (const [i, message] of messages.entries()) {
         if (!mountedRef.current) return;
 
-        const message = messages[i];
-        if (!message) return;
+        if (!message) continue;
+
         const { text, items, spinner, waitForVideo } = message;
 
         setIsSpinning(spinner);
@@ -226,9 +226,7 @@ const Loader = () => {
         }
 
         const completedLine = i === 0 ? promptPrefix + text : text;
-
         setCurrentLine("");
-
         setLines((prev) => [...prev, completedLine]);
 
         if (i === 0) {
@@ -238,12 +236,10 @@ const Loader = () => {
         }
 
         if (items.length > 0) {
-          for (let itemIdx = 0; itemIdx < items.length; itemIdx++) {
-            const item = items[itemIdx];
-            if (!mountedRef.current) return;
+          for (const item of items) {
+            if (!mountedRef.current || !item) return;
 
             const isVideoItem = item === "alien_signals.mp4";
-
             if (waitForVideo && isVideoItem) {
               while (!videoLoadedRef.current && mountedRef.current) {
                 await sleep(100);
@@ -259,18 +255,17 @@ const Loader = () => {
               ((currentItemIndex + 1) / totalItems) * 100,
             );
 
-            let charProgress = 0;
-            for (let c = 0; c < item.length; c++) {
+            let charIndex = 0;
+            for (const char of item) {
               if (!mountedRef.current) return;
-              setCurrentLine((prev) => prev + item[c]);
-
-              charProgress = c / item.length;
+              setCurrentLine((prev) => prev + char);
+              const charProgress = charIndex / item.length;
               const currentProgress =
                 startProgress +
                 Math.round((endProgress - startProgress) * charProgress);
               setProgress(currentProgress);
-
               await sleep(TYPING_SPEED);
+              charIndex++;
             }
 
             setProgress(endProgress);
@@ -350,7 +345,7 @@ const Loader = () => {
       }
       setCTAFinished(true);
     })();
-  }, [showCTA, ctaText]);
+  }, [showCTA, ctaText, ctaFinished]);
 
   const renderCTAText = () => {
     if (ctaFinished) {
