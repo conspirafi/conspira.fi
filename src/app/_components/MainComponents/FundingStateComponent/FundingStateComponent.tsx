@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import type { IPMXGetPresaleMarketDetails } from "~/server/schemas";
+import type {
+  IFundingSnapshot,
+  IPMXGetPresaleMarketDetails,
+} from "~/server/schemas";
 
 import { cn } from "@sglara/cn";
 
@@ -14,6 +17,7 @@ import { useViewport } from "~/app/providers/ViewportProvider";
 
 export interface FundingStateComponentProps {
   data: IPMXGetPresaleMarketDetails | undefined;
+  fundingSnapshot: IFundingSnapshot | null;
 }
 
 const WalletLink = ({ walletLink = "", isDesktop = true }) => {
@@ -72,7 +76,10 @@ export const FundingStateComponent: React.FC<FundingStateComponentProps> = (
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-end gap-6 p-[15px]">
-      <LimitLine limit={props.data?.limit} balance={props.data?.balance} />
+      <LimitLine
+        limit={props.fundingSnapshot?.summary.targetAmount}
+        balance={props.fundingSnapshot?.summary.finalCumulativeSum}
+      />
 
       <div className="flex w-full items-center justify-center gap-4">
         <WalletLink

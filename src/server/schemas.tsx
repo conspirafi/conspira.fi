@@ -156,11 +156,37 @@ export const PlatformFeesSchema = z.object({
   positionFees: PositionFeesSchema,
 });
 
+export const TransferSchema = z.object({
+  from: z.string(),
+  amount: z.number(),
+  cumulativeSum: z.number(),
+});
+
+export const SummarySchema = z.object({
+  totalTransfersFound: z.number(),
+  transfersProcessed: z.number(),
+  uniqueWallets: z.number(),
+  finalCumulativeSum: z.number(),
+  targetReached: z.boolean(),
+  targetAmount: z.number(),
+});
+
+export const FundingSnapshotSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  marketSlug: z.string(),
+  walletAddress: z.string(),
+  targetAmount: z.number(),
+  transfers: z.array(TransferSchema),
+  summary: SummarySchema,
+});
+
 export type IPMXGetMarket = z.infer<typeof MarketSchema>;
 export type IPMXGetPresaleMarketDetails = z.infer<
   typeof PresaleMarketDetailsSchema
 >;
 export type IPMXGetMarketFees = z.infer<typeof PlatformFeesSchema>;
+export type IFundingSnapshot = z.infer<typeof FundingSnapshotSchema>;
 
 export type IMarketHistory = z.infer<typeof MarketHistoryPricesSchema>;
 export type IMarketHistoricalData = z.infer<typeof MarketHistoricalDataSchema>;
