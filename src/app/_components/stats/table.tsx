@@ -140,7 +140,7 @@ const StatsTable: React.FC<StatsTableProps> = (props) => {
         </div> */}
         <PlatformButton
           icon={<PmxIcon />}
-          text="Trade om PMX"
+          text="Trade on PMX"
           click={() => openTrade("PMX")}
           styles="bg-base-dark-gray"
         />

@@ -56,8 +56,8 @@ const HomeComponent: React.FC = () => {
     return <div>Error loading data: {anyError.message}</div>;
   }
 
-  const isFundingState = marketPresaleDetailsData?.has_funded
-    ? !marketPresaleDetailsData?.has_funded
+  const isFundingState = marketPresaleDetailsData
+    ? !marketPresaleDetailsData.migrated
     : true;
 
   return (
