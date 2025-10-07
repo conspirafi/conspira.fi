@@ -7,6 +7,7 @@ import {
   pmxFeesApiClient,
 } from "~/server/lib/axiosConfig";
 import type {
+  IFundingSnapshot,
   IMarketHistory,
   IPMXGetMarket,
   IPMXGetMarketFees,
@@ -20,6 +21,19 @@ export const pmxMarketRouter = createTRPCRouter({
     )) as AxiosResponse<IPMXGetPresaleMarketDetails[]>;
 
     return pmxMarketResponse.data[0];
+  }),
+  getFundingSnapshot: publicProcedure.query(async () => {
+    try {
+      const pmxMarketFeesResponse = (await pmxFeesApiClient.post(
+        `snapshot-funding-wallets`,
+        {
+          marketSlug: process.env.MARKET_SLUG,
+        },
+      )) as AxiosResponse<IFundingSnapshot>;
+      return pmxMarketFeesResponse.data;
+    } catch {
+      return null;
+    }
   }),
   getMarket: publicProcedure.query(async () => {
     try {

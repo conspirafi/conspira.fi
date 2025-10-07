@@ -13,12 +13,14 @@ import { xDataStore } from "~/app/store/xDataStore";
 const HomeComponent: React.FC = () => {
   const {
     marketFeesData,
+    fundingSnapshotData,
     marketData,
     marketPresaleDetailsData,
     marketPriceHistoryYesData,
     marketPriceHistoryNoData,
     isLoadingMarket,
     isLoadingMarketFees,
+    isLoadingFundingSnapshot,
     isMarketPriceHistoryYes,
     isMarketPriceHistoryNo,
     marketError,
@@ -26,15 +28,18 @@ const HomeComponent: React.FC = () => {
     marketPresaleDetailsError,
     marketPriceHistoryYesError,
     marketPriceHistoryNoError,
+    fundingSnapshotError,
   } = useApiData();
 
   const isInitialLoading =
+    isLoadingFundingSnapshot ||
     isLoadingMarket ||
     isLoadingMarketFees ||
     isMarketPriceHistoryYes ||
     isMarketPriceHistoryNo;
 
   const anyError =
+    fundingSnapshotError ||
     marketError ||
     marketFeesError ||
     marketPresaleDetailsError ||
@@ -57,14 +62,20 @@ const HomeComponent: React.FC = () => {
   }
 
   const isFundingState = marketPresaleDetailsData
-    ? !marketPresaleDetailsData.migrated
+    ? !(
+        marketPresaleDetailsData.migrated &&
+        fundingSnapshotData?.summary.targetReached
+      )
     : true;
 
   return (
     <Overlay data={marketPresaleDetailsData} marketFees={marketFeesData}>
       <main className="bg-from-black flex min-h-screen w-screen">
         {isFundingState ? (
-          <FundingStateComponent data={marketPresaleDetailsData} />
+          <FundingStateComponent
+            data={marketPresaleDetailsData}
+            fundingSnapshot={fundingSnapshotData}
+          />
         ) : (
           <TradeInComponent
             marketFees={marketFeesData}

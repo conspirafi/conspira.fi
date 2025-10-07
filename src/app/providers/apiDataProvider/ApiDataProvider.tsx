@@ -26,6 +26,13 @@ export const ApiDataProvider: React.FC<ApiDataProviderProps> = ({
   } = api.pmxMarketRouter.getMarketFees.useQuery();
 
   const {
+    data: fundingSnapshotData,
+    isLoading: isLoadingFundingSnapshot,
+    error: fundingSnapshotError,
+    refetch: refetchFundingSnapshot,
+  } = api.pmxMarketRouter.getFundingSnapshot.useQuery();
+
+  const {
     data: marketPresaleDetailsData,
     isLoading: isLoadingMarketPresaleDetails,
     error: marketPresaleDetailsError,
@@ -58,6 +65,11 @@ export const ApiDataProvider: React.FC<ApiDataProviderProps> = ({
       marketFeesError,
       refetchMarketFees,
 
+      fundingSnapshotData: fundingSnapshotData ?? null,
+      isLoadingFundingSnapshot,
+      fundingSnapshotError,
+      refetchFundingSnapshot,
+
       marketPresaleDetailsData: marketPresaleDetailsData || undefined,
       isLoadingMarketPresaleDetails,
       marketPresaleDetailsError,
@@ -83,6 +95,11 @@ export const ApiDataProvider: React.FC<ApiDataProviderProps> = ({
       isLoadingMarketFees,
       marketFeesError,
       refetchMarketFees,
+
+      fundingSnapshotData,
+      isLoadingFundingSnapshot,
+      fundingSnapshotError,
+      refetchFundingSnapshot,
 
       marketPresaleDetailsData,
       isLoadingMarketPresaleDetails,

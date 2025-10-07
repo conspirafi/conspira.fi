@@ -3,6 +3,7 @@ import type { TRPCClientErrorLike } from "@trpc/client";
 import React from "react";
 import type { AppRouter } from "~/server/api/root";
 import type {
+  IFundingSnapshot,
   IMarketHistory,
   IPMXGetMarket,
   IPMXGetMarketFees,
@@ -25,6 +26,13 @@ export interface ApiDataContextType {
       IPMXGetMarketFees | null,
       TRPCClientErrorLike<AppRouter>
     >
+  >;
+
+  fundingSnapshotData: IFundingSnapshot | null;
+  isLoadingFundingSnapshot: boolean;
+  fundingSnapshotError: TRPCClientErrorLike<AppRouter> | null;
+  refetchFundingSnapshot: () => Promise<
+    QueryObserverResult<IFundingSnapshot | null, TRPCClientErrorLike<AppRouter>>
   >;
 
   marketPresaleDetailsData: IPMXGetPresaleMarketDetails | undefined;
