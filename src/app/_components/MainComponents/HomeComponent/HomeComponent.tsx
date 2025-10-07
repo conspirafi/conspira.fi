@@ -9,8 +9,10 @@ import FullScreenSpawner from "../../full-screen-spawner/full-screen-spawner";
 import { FundingStateComponent } from "../FundingStateComponent/FundingStateComponent";
 
 import { xDataStore } from "~/app/store/xDataStore";
+import { api } from "~/trpc/react";
 
 const HomeComponent: React.FC = () => {
+  void api.pmxMarketRouter.getEvents.usePrefetchQuery(); // Example of a request for multi-events
   const {
     marketFeesData,
     fundingSnapshotData,
