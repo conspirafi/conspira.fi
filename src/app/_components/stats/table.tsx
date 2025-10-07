@@ -60,7 +60,7 @@ const StatsTable: React.FC<StatsTableProps> = (props) => {
       className={cn(
         "bg-base-gray pointer-events-auto relative z-10 flex flex-col rounded-2xl text-amber-50 backdrop-blur-[100px]",
         {
-          "min-w-[658px gap-8 px-8 py-6": isDesktop,
+          "min-w-[658px] gap-8 px-8 py-6": isDesktop,
           "w-full gap-4 p-3": isMobile,
         },
       )}
