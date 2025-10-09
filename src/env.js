@@ -8,6 +8,8 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    TWITTER_BEARER_TOKEN: z.string().min(1),
+    XAI_API_KEY: z.string().min(1),
     PMX_API_KEY: z.string().min(1),
     PMX_API_AUTHORIZATION: z.string().min(1),
     PMX_BASE_URL: z.string().url(),
@@ -33,7 +35,9 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    XAI_API_KEY: process.env.XAI_API_KEY,
     PMX_API_KEY: process.env.PMX_API_KEY,
+    TWITTER_BEARER_TOKEN: process.env.TWITTER_BEARER_TOKEN,
     PMX_API_AUTHORIZATION: process.env.PMX_API_AUTHORIZATION,
     PMX_BASE_URL: process.env.PMX_BASE_URL,
     PMX_FEES_BASE_URL: process.env.PMX_FEES_BASE_URL,
