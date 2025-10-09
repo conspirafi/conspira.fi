@@ -12,6 +12,7 @@ import OverlaySocialBtn from "~/app/_components/buttons/overlay-social-btn";
 import VideoPlayerWithEQ from "~/app/_components/equalizer-stereo/video-player-with-eq";
 import MobileEventDetails from "./MobileEventDetails/MobileEventDetails";
 import { useViewport } from "~/app/providers/ViewportProvider";
+import EventSwitcherControls from "../../EventSwitcherControls/EventSwitcherControls";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -59,9 +60,9 @@ const OverlayMobile: React.FC<OverlayProps> = (props) => {
                   transition={transition}
                 >
                   <EventDetails
-                    title={activeEventCase.title}
-                    spec={activeEventCase.spec}
-                    link={activeEventCase.link}
+                    title={activeEventCase.eventTitle}
+                    spec={activeEventCase.eventDescription}
+                    link={activeEventCase.marketSlug}
                   />
                 </motion.div>
               )}
@@ -73,6 +74,12 @@ const OverlayMobile: React.FC<OverlayProps> = (props) => {
               activeEventCase={activeEventCase}
               marketFees={props.marketFees}
             />
+          </div>
+        </div>
+        <div className="fixed top-1/2 z-20 flex h-auto w-full -translate-y-1/2 items-center justify-between pr-[42px] pl-6">
+          <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-start"></div>
+          <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-end">
+            <EventSwitcherControls />
           </div>
         </div>
 

@@ -2,9 +2,11 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useVideo } from "~/app/providers/VideoProvider";
+import { useEventCasesStore } from "~/app/store/useEventStore";
 
 const VideoPlayerWithEQ: React.FC = () => {
   const { setVideoElement, isMuted } = useVideo();
+  const { activeEventCase } = useEventCasesStore();
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -44,7 +46,7 @@ const VideoPlayerWithEQ: React.FC = () => {
           video.src = "";
           video.load();
         } else {
-          video.src = "/3I Atlas optmizide.mp4";
+          video.src = activeEventCase?.eventVideo || "/3I Atlas optmizide.mp4";
           video.load();
           video.addEventListener(
             "loadedmetadata",
