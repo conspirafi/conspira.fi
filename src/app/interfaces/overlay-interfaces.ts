@@ -3,6 +3,7 @@ import type {
   IPMXGetPresaleMarketDetails,
 } from "~/server/schemas";
 import type { EventCase } from "../store/eventData";
+import type { IEventSchema } from "~/server/events";
 
 export interface OverlayProps {
   children?: React.ReactNode;
@@ -22,7 +23,7 @@ export interface EventTimerProps {
 }
 
 export interface MobileEventDetailsProps {
-  activeEventCase: EventCase | null;
+  activeEventCase: IEventSchema | null;
   marketFees?: IPMXGetMarketFees | null;
   data: IPMXGetPresaleMarketDetails | undefined;
 }

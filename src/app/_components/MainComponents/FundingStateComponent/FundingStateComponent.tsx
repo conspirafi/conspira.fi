@@ -74,9 +74,14 @@ export const FundingStateComponent: React.FC<FundingStateComponentProps> = (
 ) => {
   const { isDesktop } = useViewport();
 
+  const isFundingState = props.data
+    ? !(props.data?.migrated && props.fundingSnapshot?.summary.targetReached)
+    : true;
+
   return (
     <div className="flex h-screen w-full flex-col items-center justify-end gap-6 p-[15px]">
       <LimitLine
+        isFundingState={isFundingState}
         limit={props.fundingSnapshot?.summary.targetAmount}
         balance={props.fundingSnapshot?.summary.finalCumulativeSum}
       />

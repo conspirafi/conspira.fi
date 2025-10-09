@@ -15,6 +15,7 @@ import OverlaySoundBtn from "~/app/_components/buttons/overlay-sound-btn";
 import OverlaySocialBtn from "~/app/_components/buttons/overlay-social-btn";
 import EqualizerStereo from "~/app/_components/equalizer-stereo/equalizer-stereo";
 import VideoPlayerWithEQ from "~/app/_components/equalizer-stereo/video-player-with-eq";
+import EventSwitcherControls from "../../EventSwitcherControls/EventSwitcherControls";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -39,7 +40,7 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
             <AnimatePresence mode="wait">
               {activeEventCase && (
                 <motion.div
-                  key={activeEventCase.name}
+                  key={activeEventCase?.name}
                   variants={contentVariants}
                   initial="hidden"
                   animate="visible"
@@ -47,9 +48,9 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
                   transition={transition}
                 >
                   <EventDetails
-                    title={activeEventCase.title}
-                    spec={activeEventCase.spec}
-                    link={activeEventCase.link}
+                    title={activeEventCase.eventTitle || "CONSPIRA.FI"}
+                    spec={activeEventCase.eventDescription}
+                    link={activeEventCase.marketSlug}
                   />
                 </motion.div>
               )}
@@ -59,7 +60,7 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
             <AnimatePresence mode="wait">
               {activeEventCase && (
                 <motion.div
-                  key={activeEventCase.name}
+                  key={activeEventCase?.name}
                   variants={contentVariants}
                   initial="hidden"
                   animate="visible"
@@ -117,7 +118,7 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
           <VideoTimeline />
         </div>
         <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-end">
-          {/* <EventSwitcherControls /> */}
+          <EventSwitcherControls />
         </div>
       </div>
 
