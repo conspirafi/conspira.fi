@@ -27,6 +27,7 @@ const InfoRow: React.FC<{
 
 const EventDetails: React.FC<EventDetailsProps> = ({ title, spec, link }) => {
   const { isMobile, isDesktop } = useViewport();
+  const pmxLink = `https://pmx.trade/markets/presale/${link}`;
 
   return (
     <div className="flex max-w-2xl flex-col gap-y-8 text-white">
@@ -49,7 +50,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ title, spec, link }) => {
 
           <InfoRow label="Link">
             <a
-              href={link}
+              href={pmxLink}
               target="_blank"
               rel="noopener noreferrer"
               className="group pointer-events-auto inline-flex items-center gap-x-2 border-b border-gray-500 pb-1 text-lg text-white transition-colors hover:border-white"

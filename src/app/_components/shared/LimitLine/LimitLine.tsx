@@ -17,12 +17,14 @@ export interface LimitLineProps {
   balance: number | undefined;
   className?: string;
   isDesktop?: boolean;
+  isFundingState?: boolean;
 }
 
 export const LimitLine: React.FC<LimitLineProps> = ({
   limit = 0,
   balance = 0,
   className,
+  isFundingState,
 }) => {
   const balancePercentage =
     limit > 0 ? Math.min((balance / limit) * 100, 100) : 0;
@@ -39,7 +41,7 @@ export const LimitLine: React.FC<LimitLineProps> = ({
           <p className="w-[100px] text-base">Presale Limit</p>
           <div className="flex flex-col items-center">
             <p className="font-inter mb-2 text-lg font-normal text-white opacity-30">
-              Funded
+              {isFundingState ? "Funded" : "Funded, awaiting market open"}
             </p>
             <p className="font-enhanced-led-board text-shadow-glow text-[32px] leading-[50px]">
               {formatCurrency(balance)}

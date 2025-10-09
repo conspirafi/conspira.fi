@@ -3,12 +3,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CrossIcon } from "../Overlay/BordersSvg";
 import { useViewport } from "~/app/providers/ViewportProvider";
 import { cn } from "@sglara/cn";
+import { useEventCasesStore } from "~/app/store/useEventStore";
 
 const DiscoverElement = () => {
   const { isMobile, isDesktop } = useViewport();
   const [hasScrolled, setHasScrolled] = useState(false);
   const touchStartY = useRef<number | null>(null);
   const touchEndY = useRef<number | null>(null);
+  const { activeEventCase } = useEventCasesStore();
 
   useEffect(() => {
     const handleWheel = () => {
@@ -84,16 +86,24 @@ const DiscoverElement = () => {
         <CrossIcon size={isMobile ? "24" : "39"} />
       </div>
       <AnimatePresence>
-        {!hasScrolled && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <p className="font-enhanced-led-board mb-20 text-xl">
-              {isMobile ? "SWIPE & DISCOVER" : "SCROLL & DISCOVER"}
-            </p>
-          </motion.div>
+        {activeEventCase?.isAсtive ? (
+          <>
+            {!hasScrolled && (
+              <motion.div
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <p className="font-enhanced-led-board mb-20 text-xl">
+                  {isMobile ? "SWIPE & DISCOVER" : "SCROLL & DISCOVER"}
+                </p>
+              </motion.div>
+            )}
+          </>
+        ) : (
+          <p className="font-enhanced-led-board mb-20 text-center text-5xl leading-16 uppercase">
+            The event will be soon
+          </p>
         )}
       </AnimatePresence>
     </div>
