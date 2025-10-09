@@ -1,18 +1,16 @@
+"use client";
+
 import { AnimatePresence, motion, type Easing } from "framer-motion";
-
 import { useEventCasesStore } from "~/app/store/useEventStore";
-
+import { useOnboardingStore } from "~/app/store/onboardingStore";
 import type { OverlayProps } from "~/app/interfaces/overlay-interfaces";
 
-import EventDetails from "../../EventDetails/EventDetails";
 import TwitterIcon from "~/app/_components/icons/TwitterIcon";
-import DiscoverElement from "../../DiscoverElement/DiscoverElement";
 import OverlaySoundBtn from "~/app/_components/buttons/overlay-sound-btn";
 import OverlaySocialBtn from "~/app/_components/buttons/overlay-social-btn";
 import VideoPlayerWithEQ from "~/app/_components/equalizer-stereo/video-player-with-eq";
-import MobileEventDetails from "./MobileEventDetails/MobileEventDetails";
 import { useViewport } from "~/app/providers/ViewportProvider";
-import EventSwitcherControls from "../../EventSwitcherControls/EventSwitcherControls";
+import SkipIntroHint from "../SkipIntroHint";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -24,9 +22,12 @@ const transition = {
   ease: [0.43, 0.13, 0.23, 0.96] as Easing,
 };
 
-const OverlayMobile: React.FC<OverlayProps> = (props) => {
+const OverlayMobile: React.FC<OverlayProps> = () => {
   const activeEventCase = useEventCasesStore((state) => state.activeEventCase);
   const { isMobile } = useViewport();
+  const { isOnboarding, needsOnboarding } = useOnboardingStore();
+
+  const hideUI = isOnboarding || needsOnboarding;
 
   return (
     <>
@@ -36,55 +37,37 @@ const OverlayMobile: React.FC<OverlayProps> = (props) => {
             <h1 className="font-inter text-center text-[17px] opacity-30">
               Terminal
             </h1>
-            <p className="font-inter text-[17px]">{activeEventCase?.name}</p>
+            <p className="font-inter text-[17px]">Conspiracy</p>
           </div>
           <div className="pointer-events-auto flex items-start justify-start gap-1">
             <OverlaySoundBtn className="h-10 w-10 self-end" />
-            <OverlaySocialBtn
-              icon={<TwitterIcon size={isMobile ? 12 : 20} />}
-              href="https://x.com/agent_mock"
-              className="h-10 w-10 self-end"
-            />
-          </div>
-        </div>
-        <div className="flex h-auto w-full flex-1 flex-col gap-5 pt-4 pl-1.5">
-          <div className="relative z-0 flex h-auto w-full">
-            <AnimatePresence mode="wait">
-              {activeEventCase && (
-                <motion.div
-                  key={activeEventCase.name}
-                  variants={contentVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  transition={transition}
-                >
-                  <EventDetails
-                    title={activeEventCase.eventTitle}
-                    spec={activeEventCase.eventDescription}
-                    link={activeEventCase.marketSlug}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-          <div className="flex">
-            <MobileEventDetails
-              data={props.data}
-              activeEventCase={activeEventCase}
-              marketFees={props.marketFees}
-            />
-          </div>
-        </div>
-        <div className="fixed top-1/2 z-20 flex h-auto w-full -translate-y-1/2 items-center justify-between pr-[42px] pl-6">
-          <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-start"></div>
-          <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-end">
-            <EventSwitcherControls />
+            {!isOnboarding && (
+              <OverlaySocialBtn
+                icon={<TwitterIcon size={isMobile ? 12 : 20} />}
+                href="https://x.com/agent_mock"
+                className="h-10 w-10 self-end"
+              />
+            )}
           </div>
         </div>
 
-        <DiscoverElement />
+        {!hideUI && (
+          <AnimatePresence mode="wait">
+            {activeEventCase && (
+              <motion.div
+                key={activeEventCase.name}
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                transition={transition}
+              ></motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </div>
+
+      {isOnboarding && <SkipIntroHint />}
 
       <div className="fixed top-1/2 left-1/2 -z-10 h-[40svh] w-[100svw] -translate-x-1/2 -translate-y-1/2">
         <VideoPlayerWithEQ />

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useVideo } from "~/app/providers/VideoProvider";
 import { useEventCasesStore } from "~/app/store/useEventStore";
+import { useOnboardingStore } from "~/app/store/onboardingStore";
 
 const VideoPlayerWithEQ: React.FC = () => {
   const { setVideoElement, isMuted } = useVideo();
@@ -11,6 +12,9 @@ const VideoPlayerWithEQ: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const savedTimeRef = useRef<number>(0);
+
+  const { isOnboarding, needsOnboarding, startOnboarding, finishOnboarding } =
+    useOnboardingStore();
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -35,41 +39,61 @@ const VideoPlayerWithEQ: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      setVideoElement(video);
-
-      const handleVisibilityChange = () => {
-        if (document.visibilityState === "hidden") {
-          savedTimeRef.current = video.currentTime;
-          video.pause();
-          video.src = "";
-          video.load();
-        } else {
-          video.src = activeEventCase?.eventVideo || "/3I Atlas optmizide.mp4";
-          video.load();
-          video.addEventListener(
-            "loadedmetadata",
-            () => {
-              video.currentTime = savedTimeRef.current;
-              video.play();
-            },
-            { once: true },
-          );
-        }
-      };
-
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-
-      return () => {
-        document.removeEventListener(
-          "visibilitychange",
-          handleVisibilityChange,
-        );
-        setVideoElement(null);
-      };
+    if (needsOnboarding && !isOnboarding) {
+      startOnboarding();
     }
-  }, [setVideoElement]);
+  }, [needsOnboarding, isOnboarding, startOnboarding]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const videoSrc = isOnboarding
+      ? "/onboarding-video.mp4"
+      : activeEventCase?.eventVideo || "/3I Atlas optmizide.mp4";
+
+    video.src = videoSrc;
+    video.load();
+    video.play().catch(() => {});
+
+    setVideoElement(video);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        savedTimeRef.current = video.currentTime;
+        video.pause();
+        video.src = "";
+        video.load();
+      } else {
+        video.src = videoSrc;
+        video.load();
+        video.addEventListener(
+          "loadedmetadata",
+          () => {
+            video.currentTime = savedTimeRef.current;
+            video.play();
+          },
+          { once: true },
+        );
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    const handleEnded = () => {
+      if (isOnboarding) {
+        finishOnboarding();
+      }
+    };
+
+    video.addEventListener("ended", handleEnded);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      video.removeEventListener("ended", handleEnded);
+      setVideoElement(null);
+    };
+  }, [setVideoElement, activeEventCase, isOnboarding, finishOnboarding]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -105,8 +129,7 @@ const VideoPlayerWithEQ: React.FC = () => {
         ></div>
         <video
           ref={videoRef}
-          src="/3I Atlas optmizide.mp4"
-          loop
+          loop={!isOnboarding}
           playsInline
           autoPlay
           muted
