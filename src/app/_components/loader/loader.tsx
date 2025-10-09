@@ -1,11 +1,18 @@
 "use client";
 
+import { api } from "~/trpc/react";
 import React, { useEffect, useState, useRef } from "react";
+
 import "./loader.scss";
+
 import { useLoader } from "~/app/providers/LoaderProvider";
 import { useViewport } from "~/app/providers/ViewportProvider";
+import { useEventCasesStore } from "~/app/store/useEventStore";
 
 const Loader = () => {
+  const { data: fetchedEvents } = api.pmxMarketRouter.getEvents.useQuery();
+  const { setEventCases, setActiveEventCase } = useEventCasesStore();
+
   const messages = [
     { text: "~$ ./boot_conspiracies.sh", items: [], spinner: false },
     {
@@ -346,6 +353,13 @@ const Loader = () => {
       setCTAFinished(true);
     })();
   }, [showCTA, ctaText, ctaFinished]);
+
+  useEffect(() => {
+    if (fetchedEvents && fetchedEvents.length > 0) {
+      setEventCases(fetchedEvents);
+      setActiveEventCase(fetchedEvents[0] ?? null);
+    }
+  }, [fetchedEvents, setEventCases, setActiveEventCase]);
 
   const renderCTAText = () => {
     if (ctaFinished) {
