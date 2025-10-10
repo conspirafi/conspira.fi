@@ -14,6 +14,20 @@ const config = {
         port: "",
         pathname: "/profile_images/**",
       },
+      // --- ДОДАЙТЕ ЦЕЙ БЛОК ---
+      {
+        protocol: "https",
+        hostname: "abs.twimg.com",
+        port: "",
+        pathname: "/sticky/default_profile_images/**",
+      },
+      // -------------------------
+      {
+        protocol: "https",
+        hostname: "ik.imagekit.io",
+        port: "",
+        pathname: "/memeworks/**",
+      },
     ],
   },
 };

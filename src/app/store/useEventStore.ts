@@ -1,13 +1,20 @@
 import { create } from "zustand";
 import type { IEventSchema } from "~/server/events";
+import type { ITweetFullData } from "~/server/lib/twitterApi";
+
+type IEventSchemaWithTweets = IEventSchema & {
+  tweets?: ITweetFullData[];
+};
 
 type EventCasesStore = {
   eventCases: IEventSchema[];
-  activeEventCase: IEventSchema | null;
+
+  activeEventCase: IEventSchemaWithTweets | null;
+
   isEventCasePageOpen: boolean;
 
   setEventCases: (events: IEventSchema[]) => void;
-  setActiveEventCase: (eventCase: IEventSchema | null) => void;
+  setActiveEventCase: (eventCase: IEventSchemaWithTweets | null) => void;
   toggleEventCasePage: () => void;
   goToNextEvent: () => void;
   goToPrevEvent: () => void;

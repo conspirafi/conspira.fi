@@ -49,8 +49,9 @@ const VideoPlayerWithEQ: React.FC = () => {
     if (!video) return;
 
     const videoSrc = isOnboarding
-      ? "/onboarding-video.mp4"
-      : activeEventCase?.eventVideo || "/3I Atlas optmizide.mp4";
+      ? "https://ik.imagekit.io/memeworks/Conspirafi%20Markets/conspirafi-intro.mp4?updatedAt=1760012077012"
+      : activeEventCase?.eventVideo ||
+        "https://ik.imagekit.io/memeworks/Conspirafi%20Markets/conspirafi-3I-Atlas-1.mp4?updatedAt=1760010578180";
 
     video.src = videoSrc;
     video.load();

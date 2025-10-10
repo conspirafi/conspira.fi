@@ -89,7 +89,7 @@ const DiscoverElement = () => {
       </div>
       {!isOnboarding && (
         <AnimatePresence>
-          {activeEventCase?.isAсtive ? (
+          {activeEventCase?.isActive ? (
             <>
               {!hasScrolled && (
                 <motion.div

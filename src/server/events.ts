@@ -1,22 +1,22 @@
 import z from "zod";
 
-const blankEvent = {
-  name: "",
-  eventTitle: "",
-  eventVideo: "",
-  eventDescription: "",
-  marketSlug: "",
-  tweetSearchPhrase: "",
-  historicPricesTokens: {
-    yesTokenMint: "",
-    noTokenMint: "",
-  },
-  eventLinks: {
-    PMX: "",
-    JUPITER: "",
-  },
-  isAvtive: false,
-};
+// const blankEvent = {
+//   name: "",
+//   eventTitle: "",
+//   eventVideo: "",
+//   eventDescription: "",
+//   marketSlug: "",
+//   tweetSearchPhrase: "",
+//   historicPricesTokens: {
+//     yesTokenMint: "",
+//     noTokenMint: "",
+//   },
+//   eventLinks: {
+//     PMX: "",
+//     JUPITER: "",
+//   },
+//   isAvtive: false,
+// };
 
 export const EventSchema = z.object({
   name: z.string().or(z.null()),
@@ -33,7 +33,7 @@ export const EventSchema = z.object({
     PMX: z.string().or(z.null()),
     JUPITER: z.string().or(z.null()),
   }),
-  isAсtive: z.boolean(),
+  isActive: z.boolean(),
 });
 
 export type IEventSchema = z.infer<typeof EventSchema>;
@@ -41,7 +41,8 @@ export type IEventSchema = z.infer<typeof EventSchema>;
 export const events: IEventSchema[] = [
   {
     name: "CONSPIRA.FI",
-    eventVideo: "/3I Atlas optmizide.mp4",
+    eventVideo:
+      "https://ik.imagekit.io/memeworks/Conspirafi%20Markets/conspirafi-3I-Atlas-1.mp4?updatedAt=1760010578180",
     eventTitle: "Is 3I/ATLAS a Sign of Alien Engineering? <",
     eventDescription:
       "Scientists are tracking comet 3I/ATLAS as it approaches Mars in October 2025. Its chemical output and path are unusual. Will official sources confirm signs of alien engineering?",
@@ -56,11 +57,12 @@ export const events: IEventSchema[] = [
       PMX: null,
       JUPITER: null,
     },
-    isAсtive: true,
+    isActive: true,
   },
   {
     name: "The event will be soon",
-    eventVideo: "/3I Atlas optmizide.mp4",
+    eventVideo:
+      "https://ik.imagekit.io/memeworks/Conspirafi%20Markets/conspirafi-3I-Atlas-1.mp4?updatedAt=1760010578180",
     eventTitle: "3I/Atlas Info Leak",
     eventDescription:
       "Will china be the first to report on the 3I/Atlas comet?",
@@ -75,6 +77,6 @@ export const events: IEventSchema[] = [
       PMX: null,
       JUPITER: null,
     },
-    isAсtive: false,
+    isActive: false,
   },
 ];
