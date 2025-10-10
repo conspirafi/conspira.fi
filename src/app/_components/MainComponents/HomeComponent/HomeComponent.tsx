@@ -11,6 +11,7 @@ import { FundingStateComponent } from "../FundingStateComponent/FundingStateComp
 import { xDataStore } from "~/app/store/xDataStore";
 import { useEventCasesStore } from "~/app/store/useEventStore";
 import { type Easing, AnimatePresence, motion } from "framer-motion";
+import { useOnboardingStore } from "~/app/store/onboardingStore";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -24,6 +25,7 @@ const transition = {
 
 const HomeComponent: React.FC = () => {
   const { activeEventCase } = useEventCasesStore();
+  const { isOnboarding } = useOnboardingStore();
   const {
     marketFeesData,
     fundingSnapshotData,
@@ -83,52 +85,56 @@ const HomeComponent: React.FC = () => {
 
   return (
     <Overlay data={marketPresaleDetailsData} marketFees={marketFeesData}>
-      <main className="bg-from-black flex min-h-screen w-screen">
-        <AnimatePresence mode="wait">
-          {activeEventCase?.isAсtive && (
-            <motion.div
-              key={activeEventCase.marketSlug}
-              className="h-full w-full"
-            >
-              <AnimatePresence mode="wait">
-                {isFundingState ? (
-                  <motion.div
-                    key="funding-state"
-                    variants={contentVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                    transition={transition}
-                  >
-                    <FundingStateComponent
-                      data={marketPresaleDetailsData}
-                      fundingSnapshot={fundingSnapshotData}
-                    />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="trade-in-state"
-                    variants={contentVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                    transition={transition}
-                  >
-                    <TradeInComponent
-                      marketFees={marketFeesData}
-                      market={marketData}
-                      yesHistory={marketPriceHistoryYesData}
-                      noHistory={marketPriceHistoryNoData}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {!isOnboarding && (
+        <main className="bg-from-black flex min-h-screen w-screen">
+          <AnimatePresence mode="wait">
+            {activeEventCase?.isAсtive && (
+              <motion.div
+                key={activeEventCase.marketSlug}
+                className="h-full w-full"
+              >
+                <AnimatePresence mode="wait">
+                  {isFundingState ? (
+                    <motion.div
+                      key="funding-state"
+                      variants={contentVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      transition={transition}
+                    >
+                      <FundingStateComponent
+                        data={marketPresaleDetailsData}
+                        fundingSnapshot={fundingSnapshotData}
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="trade-in-state"
+                      variants={contentVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      transition={transition}
+                    >
+                      <TradeInComponent
+                        marketFees={marketFeesData}
+                        market={marketData}
+                        yesHistory={marketPriceHistoryYesData}
+                        noHistory={marketPriceHistoryNoData}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        {activeEventCase?.isAсtive && <FullScreenSpawner tweets={xDataStore} />}
-      </main>
+          {activeEventCase?.isAсtive && (
+            <FullScreenSpawner tweets={xDataStore} />
+          )}
+        </main>
+      )}
     </Overlay>
   );
 };

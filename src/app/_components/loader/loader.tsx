@@ -2,9 +2,7 @@
 
 import { api } from "~/trpc/react";
 import React, { useEffect, useState, useRef } from "react";
-
 import "./loader.scss";
-
 import { useLoader } from "~/app/providers/LoaderProvider";
 import { useViewport } from "~/app/providers/ViewportProvider";
 import { useEventCasesStore } from "~/app/store/useEventStore";
@@ -15,11 +13,7 @@ const Loader = () => {
 
   const messages = [
     { text: "~$ ./boot_conspiracies.sh", items: [], spinner: false },
-    {
-      text: "Decrypting hidden protocols...",
-      items: [],
-      spinner: true,
-    },
+    { text: "Decrypting hidden protocols...", items: [], spinner: true },
     {
       text: "Loading prediction engine...",
       items: ["markets.db", "liquidity.cfg", "resolution.log"],
@@ -44,7 +38,6 @@ const Loader = () => {
   ];
 
   const spinnerFrames: string[] = ["/", "-", "\\", "|"];
-
   const [lines, setLines] = useState<string[]>([]);
   const [currentLine, setCurrentLine] = useState<string>("");
   const [currentSpinner, setCurrentSpinner] = useState<string>("");
@@ -69,7 +62,7 @@ const Loader = () => {
   const mountedRef = useRef(true);
   const overlayRef = useRef<HTMLDivElement>(null);
   const activatedRef = useRef(false);
-  const videoLoadedRef = useRef(false);
+  const videosLoadedRef = useRef(false);
 
   const TYPING_SPEED = 10;
   const SPINNER_SPEED = 45;
@@ -87,21 +80,19 @@ const Loader = () => {
   );
 
   useEffect(() => {
-    const video = document.createElement("video");
-    video.preload = "auto";
-    video.src = "/3I Atlas optmizide.mp4";
-
-    const handleCanPlayThrough = () => {
-      videoLoadedRef.current = true;
-    };
-
-    video.addEventListener("canplaythrough", handleCanPlayThrough);
-    video.load();
-
-    return () => {
-      video.removeEventListener("canplaythrough", handleCanPlayThrough);
-      video.src = "";
-    };
+    const videoSources = ["/3I Atlas optmizide.mp4", "/onboarding-video.mp4"];
+    let loadedCount = 0;
+    videoSources.forEach((src) => {
+      const video = document.createElement("video");
+      video.preload = "auto";
+      video.src = src;
+      const handleCanPlayThrough = () => {
+        loadedCount++;
+        if (loadedCount === videoSources.length) videosLoadedRef.current = true;
+      };
+      video.addEventListener("canplaythrough", handleCanPlayThrough);
+      video.load();
+    });
   }, []);
 
   useEffect(() => {
@@ -109,7 +100,6 @@ const Loader = () => {
       setCurrentSpinner("");
       return;
     }
-
     setCurrentSpinner(spinnerFrames[0] || "");
     const interval = setInterval(() => {
       setCurrentSpinner((prev) => {
@@ -117,7 +107,6 @@ const Loader = () => {
         return spinnerFrames[(currentIndex + 1) % spinnerFrames.length] || "";
       });
     }, SPINNER_SPEED);
-
     return () => clearInterval(interval);
   }, [isSpinning, spinnerFrames]);
 
@@ -135,43 +124,22 @@ const Loader = () => {
         handleActivation();
       }
     };
-
-    if (ctaFinished) {
-      window.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    if (ctaFinished) window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [ctaFinished]);
 
   useEffect(() => {
-    const handleClick = () => {
-      handleActivation();
-    };
-
-    if (ctaFinished) {
-      window.addEventListener("click", handleClick);
-    }
-
-    return () => {
-      window.removeEventListener("click", handleClick);
-    };
+    const handleClick = () => handleActivation();
+    if (ctaFinished) window.addEventListener("click", handleClick);
+    return () => window.removeEventListener("click", handleClick);
   }, [ctaFinished]);
 
   useEffect(() => {
     const handleTouch = (e: TouchEvent) => {
-      e.preventDefault();
       handleActivation();
     };
-
-    if (ctaFinished) {
-      window.addEventListener("touchstart", handleTouch);
-    }
-
-    return () => {
-      window.removeEventListener("touchstart", handleTouch);
-    };
+    if (ctaFinished) window.addEventListener("touchstart", handleTouch);
+    return () => window.removeEventListener("touchstart", handleTouch);
   }, [ctaFinished]);
 
   useEffect(() => {
@@ -204,64 +172,47 @@ const Loader = () => {
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
-
     const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
     (async () => {
       await sleep(1000);
       if (!mountedRef.current) return;
       setIsWaiting(false);
-
       const totalItems = messages
         .slice(1)
         .reduce((acc, msg) => acc + Math.max(1, msg.items.length), 0);
       let currentItemIndex = 0;
-
       for (const [i, message] of messages.entries()) {
         if (!mountedRef.current) return;
-
-        if (!message) continue;
-
         const { text, items, spinner, waitForVideo } = message;
-
         setIsSpinning(spinner);
-
         for (const char of text) {
           if (!mountedRef.current) return;
           setCurrentLine((prev) => prev + char);
           await sleep(TYPING_SPEED);
         }
-
         const completedLine = i === 0 ? promptPrefix + text : text;
         setCurrentLine("");
         setLines((prev) => [...prev, completedLine]);
-
         if (i === 0) {
           setPromptPrefix("");
           await sleep(300);
           setShowStatus(true);
         }
-
         if (items.length > 0) {
           for (const item of items) {
             if (!mountedRef.current || !item) return;
-
-            const isVideoItem = item === "alien_signals.mp4";
-            if (waitForVideo && isVideoItem) {
-              while (!videoLoadedRef.current && mountedRef.current) {
+            if (waitForVideo && item.endsWith(".mp4")) {
+              while (!videosLoadedRef.current && mountedRef.current) {
                 await sleep(100);
               }
             }
-
             setCurrentLine("");
-
             const startProgress = Math.round(
               (currentItemIndex / totalItems) * 100,
             );
             const endProgress = Math.round(
               ((currentItemIndex + 1) / totalItems) * 100,
             );
-
             let charIndex = 0;
             for (const char of item) {
               if (!mountedRef.current) return;
@@ -274,7 +225,6 @@ const Loader = () => {
               await sleep(TYPING_SPEED);
               charIndex++;
             }
-
             setProgress(endProgress);
             setLines((prev) => [...prev, item]);
             setCurrentLine("");
@@ -288,29 +238,17 @@ const Loader = () => {
           setProgress(progressValue);
           currentItemIndex++;
         }
-
-        if (spinner && items.length === 0) {
-          await sleep(8 * SPINNER_SPEED);
-        }
-
+        if (spinner && items.length === 0) await sleep(8 * SPINNER_SPEED);
         setIsSpinning(false);
-
-        if (i >= 1 && i < messages.length - 1) {
+        if (i >= 1 && i < messages.length - 1)
           setLines((prev) => [...prev, "\u00A0"]);
-        }
-
         await sleep(220);
       }
-
       setProgress(100);
       await sleep(200);
-
       setLines((prev) => [...prev, "\u00A0"]);
-      await sleep(100);
-
       await sleep(200);
       setShowQuotes(true);
-
       for (const quote of quotes) {
         if (!mountedRef.current) return;
         setCurrentQuoteLine("");
@@ -323,16 +261,12 @@ const Loader = () => {
         setCurrentQuoteLine("");
         await sleep(300);
       }
-
       await sleep(100);
-      if (!mountedRef.current) return;
       setQuoteLines((prev) => [...prev, "\u00A0"]);
       setFinished(true);
-
       await sleep(200);
       setShowCTA(true);
     })();
-
     return () => {
       mountedRef.current = false;
     };
@@ -340,9 +274,7 @@ const Loader = () => {
 
   useEffect(() => {
     if (!showCTA || ctaFinished) return;
-
     const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
-
     (async () => {
       setCurrentCTAText("");
       for (const char of ctaText) {
@@ -373,11 +305,9 @@ const Loader = () => {
         </>
       );
     }
-
     const lenBefore = beforeHighlight.length;
     const lenHighlight = highlightWord.length;
     const currentLen = currentCTAText.length;
-
     if (currentLen <= lenBefore) {
       return (
         <>
@@ -427,7 +357,6 @@ const Loader = () => {
             {lines.map((line, idx) => (
               <div key={idx}>{line}</div>
             ))}
-
             {!finished && !showQuotes && (
               <div>
                 {promptPrefix}
@@ -437,11 +366,9 @@ const Loader = () => {
                 )}
               </div>
             )}
-
             {currentSpinner && (
               <div style={{ opacity: 0.3 }}>{currentSpinner}</div>
             )}
-
             {showStatus && (
               <div>
                 Status:{" "}
@@ -450,7 +377,6 @@ const Loader = () => {
                 </span>
               </div>
             )}
-
             {showQuotes && (
               <>
                 <div>{"\u00A0"}</div>
@@ -467,7 +393,6 @@ const Loader = () => {
             )}
           </div>
         </div>
-
         {showCTA && (
           <div className="mt-8 text-center">
             <div
@@ -478,7 +403,6 @@ const Loader = () => {
           </div>
         )}
       </div>
-
       {(isFlashing || isShrinking) && (
         <div
           ref={overlayRef}
