@@ -55,7 +55,7 @@ const VideoPlayerWithEQ: React.FC = () => {
 
     video.src = videoSrc;
     video.load();
-    video.play().catch(() => {});
+    video.play().catch();
 
     setVideoElement(video);
 
