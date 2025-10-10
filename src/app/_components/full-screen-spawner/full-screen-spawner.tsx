@@ -1,49 +1,83 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TwitterCard from "../twitter-card/twitter-card";
-
-interface TwitterData {
-  id: number | string;
-  avatar: string;
-  name: string;
-  url: string;
-  username: string;
-  date: string;
-  text: string;
-}
+import { useEventCasesStore } from "~/app/store/useEventStore";
+import type { ITweetFullData } from "~/server/lib/twitterApi";
 
 interface CardInstance {
-  data: TwitterData;
+  data: ITweetFullData;
   key: number;
   progress: number;
   style: React.CSSProperties;
 }
 
-interface FullScreenSpawnerProps {
-  tweets: TwitterData[];
-}
-
-export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
+export default function FullScreenSpawner() {
+  const { activeEventCase } = useEventCasesStore();
   const [activeCards, setActiveCards] = useState<CardInstance[]>([]);
   const cardKey = useRef(0);
-  const availableTweets = useRef(new Set(tweets.map((t) => t.id)));
+  const tweets = activeEventCase?.tweets ?? [];
+
+  const availableTweets = useRef<Set<string>>(new Set());
   const pendingSpawns = useRef<number[]>([]);
   const lastSpawnTime = useRef(0);
   const velocity = useRef(0);
   const targetVelocity = useRef(0);
   const animationFrame = useRef<number | null>(null);
-
   const touchStartY = useRef<number | null>(null);
   const touchStartTime = useRef<number | null>(null);
   const lastTouchY = useRef<number | null>(null);
   const lastTouchTime = useRef<number | null>(null);
   const touchVelocity = useRef(0);
-
   const BASE_AUTOPLAY_VELOCITY = 0.0019;
 
+  const spawnCard = (initialProgress: 0 | 1) => {
+    if (availableTweets.current.size === 0 || tweets.length === 0) return;
+
+    const ids = Array.from(availableTweets.current);
+    const randomId = ids[Math.floor(Math.random() * ids.length)];
+    if (!randomId) return;
+
+    const tweet = tweets.find((t) => t.id === randomId);
+    if (!tweet) return;
+
+    availableTweets.current.delete(randomId);
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const centerX = viewportWidth / 2;
+    const centerY = viewportHeight / 2;
+    const offsetX = (Math.random() - 0.5) * viewportWidth * 0.56;
+    const offsetY = (Math.random() - 0.5) * viewportHeight * 0.4;
+
+    const key = cardKey.current++;
+    const initialStyle: React.CSSProperties = {
+      position: "absolute",
+      left: `${centerX + offsetX - 160.5}px`,
+      top: `${centerY + offsetY - 100}px`,
+    };
+
+    setActiveCards((prev) => [
+      ...prev,
+      { data: tweet, key, progress: initialProgress, style: initialStyle },
+    ]);
+  };
+
   useEffect(() => {
-    spawnCard(0);
+    if (tweets.length === 0) {
+      setActiveCards([]);
+      return;
+    }
+
+    setActiveCards([]);
+    cardKey.current = 0;
+    availableTweets.current = new Set(tweets.map((t) => t.id));
+    velocity.current = 0;
+    targetVelocity.current = 0;
+    pendingSpawns.current.forEach(clearTimeout);
+    pendingSpawns.current = [];
+
+    const initialSpawnTimeout = setTimeout(() => spawnCard(0), 100);
 
     const animate = () => {
       const smoothingFactor = 0.1;
@@ -112,7 +146,6 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
     const handleWheel = (e: WheelEvent) => {
       const delta = e.deltaY / 500;
       if (delta === 0) return;
-
       targetVelocity.current += delta * 0.1;
       targetVelocity.current = Math.max(
         -0.05,
@@ -123,7 +156,6 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
     const handleTouchStart = (e: TouchEvent) => {
       const touch = e.touches[0];
       if (!touch) return;
-
       touchStartY.current = touch.clientY;
       touchStartTime.current = Date.now();
       lastTouchY.current = touch.clientY;
@@ -133,13 +165,10 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
 
     const handleTouchMove = (e: TouchEvent) => {
       if (touchStartY.current === null || lastTouchY.current === null) return;
-
       const touch = e.touches[0];
       if (!touch) return;
-
       const currentY = touch.clientY;
       const currentTime = Date.now();
-
       if (lastTouchTime.current !== null) {
         const timeDelta = currentTime - lastTouchTime.current;
         if (timeDelta > 0) {
@@ -147,16 +176,13 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
           touchVelocity.current = distance / timeDelta;
         }
       }
-
       const totalDistance = currentY - touchStartY.current;
       const normalizedDistance = totalDistance / 300;
-
       targetVelocity.current = -normalizedDistance * 0.02;
       targetVelocity.current = Math.max(
         -0.05,
         Math.min(0.05, targetVelocity.current),
       );
-
       lastTouchY.current = currentY;
       lastTouchTime.current = currentTime;
     };
@@ -164,10 +190,8 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
     const handleTouchEnd = () => {
       if (touchStartY.current === null || touchStartTime.current === null)
         return;
-
       const currentTime = Date.now();
       const timeDelta = currentTime - touchStartTime.current;
-
       if (timeDelta < 300 && Math.abs(touchVelocity.current) > 0.2) {
         const momentum = -touchVelocity.current * 0.05;
         targetVelocity.current += momentum;
@@ -176,7 +200,6 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
           Math.min(0.05, targetVelocity.current),
         );
       }
-
       touchStartY.current = null;
       touchStartTime.current = null;
       lastTouchY.current = null;
@@ -190,46 +213,15 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
+      if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
+      pendingSpawns.current.forEach(clearTimeout);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
-      pendingSpawns.current.forEach(clearTimeout);
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-      }
+      clearTimeout(initialSpawnTimeout);
     };
-  }, []);
-
-  const spawnCard = (initialProgress: 0 | 1) => {
-    if (availableTweets.current.size === 0) return;
-
-    const ids = Array.from(availableTweets.current);
-    const randomId = ids[Math.floor(Math.random() * ids.length)];
-    const tweet = tweets.find((t) => t.id === randomId);
-    if (!tweet) return;
-
-    availableTweets.current.delete(randomId as any);
-
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const centerX = viewportWidth / 2;
-    const centerY = viewportHeight / 2;
-    const offsetX = (Math.random() - 0.5) * viewportWidth * 0.56;
-    const offsetY = (Math.random() - 0.5) * viewportHeight * 0.4;
-
-    const key = cardKey.current++;
-    const initialStyle: React.CSSProperties = {
-      position: "absolute",
-      left: `${centerX + offsetX - 160.5}px`,
-      top: `${centerY + offsetY - 100}px`,
-    };
-
-    setActiveCards((prev) => [
-      ...prev,
-      { data: tweet, key, progress: initialProgress, style: initialStyle },
-    ]);
-  };
+  }, [activeEventCase]);
 
   const getCardStyle = (progress: number, baseStyle: React.CSSProperties) => {
     const scale = 0.2 + progress * 0.7;
@@ -255,12 +247,12 @@ export default function FullScreenSpawner({ tweets }: FullScreenSpawnerProps) {
           className="pointer-events-auto"
         >
           <TwitterCard
-            avatar={card.data.avatar}
-            name={card.data.name}
-            username={card.data.username}
-            date={card.data.date}
-            text={card.data.text}
-            url={card.data.url}
+            avatar={card?.data?.user?.avatar || ""}
+            name={card?.data?.user?.name || ""}
+            username={card?.data?.user?.username || ""}
+            date={new Date(card?.data?.createdAt || "").toLocaleDateString()}
+            text={card?.data?.text || ""}
+            url={card?.data?.url || ""}
           />
         </div>
       ))}

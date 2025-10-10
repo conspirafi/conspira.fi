@@ -7,6 +7,8 @@ import {
   pmxApiClient,
   pmxFeesApiClient,
 } from "~/server/lib/axiosConfig";
+import { type ITweetFullData } from "~/server/lib/twitterApi";
+import { searchTweetsCached } from "~/server/lib/twitterCache";
 import type {
   IFundingSnapshot,
   IMarketHistory,
@@ -16,8 +18,18 @@ import type {
 } from "~/server/schemas";
 
 export const pmxMarketRouter = createTRPCRouter({
-  getEvents: publicProcedure.query(() => {
-    return events;
+  getEvents: publicProcedure.query(async () => {
+    const result = [];
+    for (const event of events) {
+      let tweets: ITweetFullData[] = [];
+
+      if (event.tweetSearchPhrase) {
+        const chachedTweets = await searchTweetsCached(event.tweetSearchPhrase);
+        tweets = chachedTweets.data;
+      }
+      result.push({ ...event, tweets });
+    }
+    return result;
   }),
   getPresaleMarketDetails: publicProcedure
     .input(z.object({ marketSlug: z.string() }).optional())

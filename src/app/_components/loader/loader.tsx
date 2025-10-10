@@ -80,7 +80,10 @@ const Loader = () => {
   );
 
   useEffect(() => {
-    const videoSources = ["/3I Atlas optmizide.mp4", "/onboarding-video.mp4"];
+    const videoSources = [
+      "https://ik.imagekit.io/memeworks/Conspirafi%20Markets/conspirafi-3I-Atlas-1.mp4?updatedAt=1760010578180",
+      "https://ik.imagekit.io/memeworks/Conspirafi%20Markets/conspirafi-intro.mp4?updatedAt=1760012077012",
+    ];
     let loadedCount = 0;
     videoSources.forEach((src) => {
       const video = document.createElement("video");
@@ -135,7 +138,7 @@ const Loader = () => {
   }, [ctaFinished]);
 
   useEffect(() => {
-    const handleTouch = (e: TouchEvent) => {
+    const handleTouch = () => {
       handleActivation();
     };
     if (ctaFinished) window.addEventListener("touchstart", handleTouch);

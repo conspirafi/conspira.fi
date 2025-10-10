@@ -63,7 +63,7 @@ const OverlayMobile: React.FC<OverlayProps> = ({ data, marketFees }) => {
 
         {!hideUI && (
           <AnimatePresence mode="wait">
-            {activeEventCase?.isAсtive && (
+            {activeEventCase?.isActive && (
               <motion.div
                 key={activeEventCase.name}
                 variants={contentVariants}

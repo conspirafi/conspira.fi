@@ -8,7 +8,6 @@ import { useApiData } from "~/app/providers/apiDataProvider/useApiData";
 import FullScreenSpawner from "../../full-screen-spawner/full-screen-spawner";
 import { FundingStateComponent } from "../FundingStateComponent/FundingStateComponent";
 
-import { xDataStore } from "~/app/store/xDataStore";
 import { useEventCasesStore } from "~/app/store/useEventStore";
 import { type Easing, AnimatePresence, motion } from "framer-motion";
 import { useOnboardingStore } from "~/app/store/onboardingStore";
@@ -88,7 +87,7 @@ const HomeComponent: React.FC = () => {
       {!isOnboarding && (
         <main className="bg-from-black flex min-h-screen w-screen">
           <AnimatePresence mode="wait">
-            {activeEventCase?.isAсtive && (
+            {activeEventCase?.isActive && (
               <motion.div
                 key={activeEventCase.marketSlug}
                 className="h-full w-full"
@@ -130,9 +129,7 @@ const HomeComponent: React.FC = () => {
             )}
           </AnimatePresence>
 
-          {activeEventCase?.isAсtive && (
-            <FullScreenSpawner tweets={xDataStore} />
-          )}
+          {activeEventCase?.isActive && <FullScreenSpawner />}
         </main>
       )}
     </Overlay>

@@ -2,7 +2,6 @@ import type {
   IPMXGetMarketFees,
   IPMXGetPresaleMarketDetails,
 } from "~/server/schemas";
-import type { EventCase } from "../store/eventData";
 import type { IEventSchema } from "~/server/events";
 
 export interface OverlayProps {
