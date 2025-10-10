@@ -11,6 +11,11 @@ import OverlaySocialBtn from "~/app/_components/buttons/overlay-social-btn";
 import VideoPlayerWithEQ from "~/app/_components/equalizer-stereo/video-player-with-eq";
 import { useViewport } from "~/app/providers/ViewportProvider";
 import SkipIntroHint from "../SkipIntroHint";
+import { useEffect } from "react";
+import MobileEventDetails from "./MobileEventDetails/MobileEventDetails";
+import EventSwitcherControls from "../../EventSwitcherControls/EventSwitcherControls";
+import VideoTimeline from "../../VideoTimeline/VideoTimeline";
+import DiscoverElement from "../../DiscoverElement/DiscoverElement";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -22,12 +27,17 @@ const transition = {
   ease: [0.43, 0.13, 0.23, 0.96] as Easing,
 };
 
-const OverlayMobile: React.FC<OverlayProps> = () => {
+const OverlayMobile: React.FC<OverlayProps> = ({ data, marketFees }) => {
   const activeEventCase = useEventCasesStore((state) => state.activeEventCase);
   const { isMobile } = useViewport();
-  const { isOnboarding, needsOnboarding } = useOnboardingStore();
 
-  const hideUI = isOnboarding || needsOnboarding;
+  const isOnboarding = useOnboardingStore((s) => s.isOnboarding);
+  const needsOnboarding = useOnboardingStore((s) => s.needsOnboarding);
+  const hideUI = isOnboarding && needsOnboarding;
+
+  useEffect(() => {
+    console.log(activeEventCase);
+  });
 
   return (
     <>
@@ -53,7 +63,7 @@ const OverlayMobile: React.FC<OverlayProps> = () => {
 
         {!hideUI && (
           <AnimatePresence mode="wait">
-            {activeEventCase && (
+            {activeEventCase?.isAсtive && (
               <motion.div
                 key={activeEventCase.name}
                 variants={contentVariants}
@@ -61,12 +71,29 @@ const OverlayMobile: React.FC<OverlayProps> = () => {
                 animate="visible"
                 exit="hidden"
                 transition={transition}
-              ></motion.div>
+              >
+                <MobileEventDetails
+                  activeEventCase={activeEventCase}
+                  data={data}
+                  marketFees={marketFees}
+                />
+              </motion.div>
             )}
           </AnimatePresence>
         )}
       </div>
 
+      {!isOnboarding && (
+        <div className="fixed top-1/2 z-20 flex h-auto w-full -translate-y-1/2 items-center justify-between pr-[42px] pl-6">
+          <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-start">
+            <VideoTimeline />
+          </div>
+          <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-end">
+            <EventSwitcherControls />
+          </div>
+          <DiscoverElement />
+        </div>
+      )}
       {isOnboarding && <SkipIntroHint />}
 
       <div className="fixed top-1/2 left-1/2 -z-10 h-[40svh] w-[100svw] -translate-x-1/2 -translate-y-1/2">
