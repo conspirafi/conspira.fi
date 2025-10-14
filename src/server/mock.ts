@@ -4,6 +4,18 @@ import type {
   IPMXGetPresaleMarketDetails,
 } from "./schemas";
 
+export interface IConspiraInfo {
+  type: "youtube" | "article" | "podcast";
+  link?: string;
+  imgSrc?: string;
+  title: string;
+  date: string;
+}
+export interface IConspiraInfoMockData {
+  id: string;
+  data: IConspiraInfo[];
+}
+
 export const marketFeesMock: IPMXGetMarketFees = {
   success: true,
   message: "Platform fees retrieved successfully",
@@ -363,3 +375,103 @@ export const historyMockForNo: IMarketHistory = {
   tokenMint: "ExYRroRpBxByxZxDf7yZBwSr9RqNdixhq15DVqRNUAwv",
   hasCurrentPrice: true,
 };
+
+export const ConsiraInfoMocksData: IConspiraInfoMockData[] = [
+  {
+    id: "0",
+    data: [
+      {
+        type: "youtube",
+        link: "https://www.youtube.com/watch?v=DBZi54I1nVo",
+        imgSrc: "/conspiMockImg/id_1/1.webp",
+        title:
+          "First Images of 3I/ATLAS from Mars Revealed as Earth-based Observations Go DARK",
+        date: "10/06/2025",
+      },
+      {
+        type: "youtube",
+        link: "https://youtu.be/W9p_TBzxFBs",
+        imgSrc: "/conspiMockImg/id_1/2.webp",
+        title: "Something Weird is Happening With 3I Atlas",
+        date: "10/04/2025",
+      },
+      {
+        type: "youtube",
+        link: "https://www.youtube.com/watch?v=Oh42mmh9LJ4",
+        imgSrc: "/conspiMockImg/id_1/3.webp",
+        title:
+          "These 3i/Atlas Updates Will Blow Your Mind - New Info Changes What We Thought",
+        date: "10/06/2025",
+      },
+      {
+        type: "youtube",
+        link: "https://www.youtube.com/watch?v=mE8r2wcQwVE",
+        imgSrc: "/conspiMockImg/id_1/4.webp",
+        title: "Avi Loeb on 3i Atlas Mars Flyby Cylinder Pictures!",
+        date: "10/06/2025",
+      },
+      {
+        type: "youtube",
+        link: "https://www.youtube.com/watch?v=WhL6mv3GT7I",
+        imgSrc: "/conspiMockImg/id_1/4.webp",
+        title:
+          "3I/ATLAS SPOTTED OVER MARS. THAT DOESN'T LOOK LIKE A COMET! WHAT IS IT?!",
+        date: "10/07/2025",
+      },
+      {
+        type: "podcast",
+        link: "https://open.spotify.com/episode/5dtI1RHpVrA6pgo8Co9xtk?si=b9ac305c60de460d",
+        imgSrc: "/conspiMockImg/id_1/p_1.webp",
+        title:
+          "3I/ATLAS Update: JWST Reveals Its Composition | with Martin Cordiner",
+        date: "09/28/2025",
+      },
+      {
+        type: "article",
+        link: "https://science.nasa.gov/solar-system/comets/3i-atlas/",
+        imgSrc: "/conspiMockImg/id_1/a_1.webp",
+        title: "Comet 3I/ATLAS",
+        date: "10/06/2025",
+      },
+      {
+        type: "article",
+        link: "https://www.space.com/astronomy/comets/did-nasas-perseverance-mars-rover-just-see-interstellar-comet-3i-atlas-in-the-martian-night-sky",
+        imgSrc: "/conspiMockImg/id_1/a_2.webp",
+        title:
+          "Did NASA's Perseverance Mars rover just see interstellar comet 3I/ATLAS in the Martian night sky?",
+        date: "10/06/2025",
+      },
+      {
+        type: "article",
+        link: "https://www.dailymail.co.uk/sciencetech/article-15166477/interstellar-visitor-Mars-cylindrical-craft-3i-atlas.html",
+        imgSrc: "/conspiMockImg/id_1/a_3.webp",
+        title:
+          "Mysterious interstellar visitor spotted above Mars appears as 'massive cylindrical craft'",
+        date: "10/06/2025",
+      },
+      {
+        type: "article",
+        link: "https://en.wikipedia.org/wiki/3I/ATLAS",
+        imgSrc: "/conspiMockImg/id_1/a_4.webp",
+        title: "3I/ATLAS",
+        date: "10/06/2025",
+      },
+      {
+        type: "article",
+        link: "https://science.nasa.gov/solar-system/comets/3i-atlas/",
+        imgSrc: "/conspiMockImg/id_1/a_5.webp",
+        title:
+          "NASA missions are working together to track and study this rare, interstellar comet as it passes through our solar system.",
+        date: "10/06/2025",
+      },
+      {
+        type: "article",
+        link: "https://www.livescience.com/space/comets/interstellar-comet-3i-atlas-may-come-from-the-mysterious-frontier-of-the-early-milky-way-new-study-hints",
+        imgSrc: "/conspiMockImg/id_1/a_6.webp",
+        title:
+          "Interstellar comet 3I/ATLAS may come from the mysterious frontier of the early Milky Way, new study hints",
+        date: "10/06/2025",
+      },
+    ],
+  },
+];

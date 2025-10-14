@@ -1,9 +1,13 @@
 import React from "react";
+import { useConspirafiStore } from "~/app/store/conspirafiStore";
 
 const BackBtn = () => {
+  const { setVisibility } = useConspirafiStore();
+
   return (
     <div className="pointer-events-auto relative flex min-w-[140px] items-center justify-end">
       <button
+        onClick={() => setVisibility(false)}
         className="font-inter relative flex h-[122px] w-[283px] cursor-pointer items-center justify-center text-[22px] font-normal text-black"
         style={{ background: "transparent" }}
       >

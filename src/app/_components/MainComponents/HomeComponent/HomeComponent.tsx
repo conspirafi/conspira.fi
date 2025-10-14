@@ -11,6 +11,9 @@ import { FundingStateComponent } from "../FundingStateComponent/FundingStateComp
 import { useEventCasesStore } from "~/app/store/useEventStore";
 import { type Easing, AnimatePresence, motion } from "framer-motion";
 import { useOnboardingStore } from "~/app/store/onboardingStore";
+import ConspirafiInfo from "../../conspirafi-info/ConspirafiInfo";
+import { useConspirafiStore } from "~/app/store/conspirafiStore";
+import BackBtn from "../../buttons/back-btn";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -22,8 +25,16 @@ const transition = {
   ease: [0.43, 0.13, 0.23, 0.96] as Easing,
 };
 
+const conspirafiVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
+};
+
 const HomeComponent: React.FC = () => {
   const { activeEventCase } = useEventCasesStore();
+  const { isVisible: isConspirafiVisible } = useConspirafiStore();
+
   const { isOnboarding } = useOnboardingStore();
   const {
     marketFeesData,
@@ -130,6 +141,38 @@ const HomeComponent: React.FC = () => {
           </AnimatePresence>
 
           {activeEventCase?.isActive && <FullScreenSpawner />}
+
+          <AnimatePresence>
+            {isConspirafiVisible && (
+              <motion.div
+                key="conspirafi-info-back-btn"
+                className="pointer-events-auto fixed bottom-0 left-1/2 z-[100] -translate-x-1/2"
+                variants={conspirafiVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <BackBtn />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {isConspirafiVisible && (
+              <motion.div
+                className="absolute inset-0 z-20"
+                key="conspirafi-info"
+                variants={conspirafiVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <ConspirafiInfo />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
       )}
     </Overlay>
