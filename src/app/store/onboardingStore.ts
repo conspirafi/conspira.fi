@@ -1,5 +1,5 @@
 import { create } from "zustand";
-// import { persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
 type OnboardingStore = {
   isOnboarding: boolean;
@@ -10,33 +10,33 @@ type OnboardingStore = {
 };
 
 export const useOnboardingStore = create<OnboardingStore>()(
-  // persist(
-  (set) => ({
-    isOnboarding: false,
-    needsOnboarding: true,
+  persist(
+    (set) => ({
+      isOnboarding: false,
+      needsOnboarding: true,
 
-    startOnboarding: () =>
-      set({
-        isOnboarding: true,
-      }),
+      startOnboarding: () =>
+        set({
+          isOnboarding: true,
+        }),
 
-    finishOnboarding: () =>
-      set({
-        isOnboarding: false,
-        needsOnboarding: false,
-      }),
+      finishOnboarding: () =>
+        set({
+          isOnboarding: false,
+          needsOnboarding: false,
+        }),
 
-    resetOnboarding: () =>
-      set({
-        isOnboarding: false,
-        needsOnboarding: true,
+      resetOnboarding: () =>
+        set({
+          isOnboarding: false,
+          needsOnboarding: true,
+        }),
+    }),
+    {
+      name: "onboarding-storage",
+      partialize: (state) => ({
+        needsOnboarding: state.needsOnboarding,
       }),
-  }),
-  //   {
-  //     name: "onboarding-storage",
-  //     partialize: (state) => ({
-  //       needsOnboarding: state.needsOnboarding,
-  //     }),
-  //   },
-  // ),
+    },
+  ),
 );
