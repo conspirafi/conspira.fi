@@ -14,6 +14,7 @@ import EqualizerStereo from "~/app/_components/equalizer-stereo/equalizer-stereo
 import VideoPlayerWithEQ from "~/app/_components/equalizer-stereo/video-player-with-eq";
 import EventSwitcherControls from "../../EventSwitcherControls/EventSwitcherControls";
 import SkipIntroHint from "../SkipIntroHint";
+import ShowLeaksBtn from "~/app/_components/buttons/show-leaks-btn";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -133,6 +134,7 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
           </div>
           <div className="pointer-events-none flex h-auto w-full flex-1 items-center justify-end">
             <EventSwitcherControls />
+            <ShowLeaksBtn />
           </div>
         </div>
       )}
