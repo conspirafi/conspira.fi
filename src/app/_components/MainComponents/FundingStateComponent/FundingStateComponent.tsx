@@ -14,6 +14,14 @@ import CopyIcon from "../../icons/CopyIcon";
 import LinkIcon from "../../icons/LinkIcon";
 import { LimitLine } from "../../shared/LimitLine/LimitLine";
 import { useViewport } from "~/app/providers/ViewportProvider";
+import ShowLeaksBtn from "../../buttons/show-leaks-btn";
+import { useConspirafiStore } from "~/app/store/conspirafiStore";
+
+const conspirafiVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
+};
 
 export interface FundingStateComponentProps {
   data: IPMXGetPresaleMarketDetails | undefined;
@@ -73,6 +81,7 @@ export const FundingStateComponent: React.FC<FundingStateComponentProps> = (
   props,
 ) => {
   const { isDesktop } = useViewport();
+  const { isVisible: isConspirafiVisible } = useConspirafiStore();
 
   const isFundingState = props.data
     ? !(props.data?.migrated && props.fundingSnapshot?.summary.targetReached)
@@ -80,11 +89,28 @@ export const FundingStateComponent: React.FC<FundingStateComponentProps> = (
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-end gap-6 p-[15px]">
-      <LimitLine
-        isFundingState={isFundingState}
-        limit={props.fundingSnapshot?.summary.targetAmount}
-        balance={props.fundingSnapshot?.summary.finalCumulativeSum}
-      />
+      <div className="flex w-full flex-col items-center justify-center">
+        <AnimatePresence>
+          {!isConspirafiVisible && (
+            <motion.div
+              key="conspirafi-info-back-btn"
+              className="pointer-events-auto"
+              variants={conspirafiVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <ShowLeaksBtn />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <LimitLine
+          isFundingState={isFundingState}
+          limit={props.fundingSnapshot?.summary.targetAmount}
+          balance={props.fundingSnapshot?.summary.finalCumulativeSum}
+        />
+      </div>
 
       <div className="flex w-full items-center justify-center gap-4">
         <WalletLink

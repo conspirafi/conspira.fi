@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useConspirafiStore } from "~/app/store/conspirafiStore";
 
 interface Particle {
   id: string;
@@ -11,8 +12,8 @@ interface Particle {
 
 const generateParticle = (index: number): Particle => {
   const zones: number[] = [70, 90, 110, 130, 150, 170];
-  // @ts-ignore
-  const x: number = zones[index % zones.length] + (Math.random() * 15 - 7.5);
+
+  const x = (zones[index % zones.length] ?? 100) + (Math.random() * 15 - 7.5);
   return {
     id: Math.random().toString(36).substr(2, 9),
     x,
@@ -24,6 +25,8 @@ const generateParticle = (index: number): Particle => {
 };
 
 const ShowLeaksBtn: React.FC = () => {
+  const { toggleVisibility } = useConspirafiStore();
+
   const [particles, setParticles] = useState<Particle[]>(
     Array.from({ length: 7 }, (_, i) => generateParticle(i)),
   );
@@ -64,7 +67,7 @@ const ShowLeaksBtn: React.FC = () => {
   }, [speedMultiplier]);
 
   const getParticleStyle = (p: Particle): React.CSSProperties => {
-    let opacity: number = 0;
+    let opacity = 0;
     if (p.progress > 0.15 && p.progress < 0.85) {
       opacity = 1;
     } else if (p.progress <= 0.15) {
@@ -87,6 +90,7 @@ const ShowLeaksBtn: React.FC = () => {
   return (
     <div className="pointer-events-auto relative flex min-w-[140px] items-center justify-end gap-[32px]">
       <button
+        onClick={toggleVisibility}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className="font-inter relative flex h-[81px] w-[239px] cursor-pointer items-center justify-center text-[22px] font-normal text-white"

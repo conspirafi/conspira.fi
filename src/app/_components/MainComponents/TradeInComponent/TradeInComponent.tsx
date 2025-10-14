@@ -12,7 +12,15 @@ import { useMemo, useState } from "react";
 import { roundToTwoDecimals } from "~/app/utils/math";
 import { useViewport } from "~/app/providers/ViewportProvider";
 import { cn } from "@sglara/cn";
+import { AnimatePresence, motion } from "framer-motion";
+import ShowLeaksBtn from "../../buttons/show-leaks-btn";
+import { useConspirafiStore } from "~/app/store/conspirafiStore";
 
+const conspirafiVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
+};
 interface TradeInProps {
   yesHistory: IMarketHistory | undefined;
   noHistory: IMarketHistory | undefined;
@@ -36,6 +44,8 @@ function splitData(
 }
 
 export const TradeInComponent = (props: TradeInProps) => {
+  const { isVisible: isConspirafiVisible } = useConspirafiStore();
+
   const { isMobile, isDesktop } = useViewport();
   const [showTable, setShowTable] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState<{
@@ -102,6 +112,21 @@ export const TradeInComponent = (props: TradeInProps) => {
         { "p-2.5": isMobile, "p-[15px]": isDesktop },
       )}
     >
+      <AnimatePresence>
+        {!isConspirafiVisible && !showTable && (
+          <motion.div
+            key="conspirafi-info-show-leaks"
+            className="pointer-events-auto"
+            variants={conspirafiVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <ShowLeaksBtn />
+          </motion.div>
+        )}
+      </AnimatePresence>
       {showTable && (
         <>
           <StatsTable
