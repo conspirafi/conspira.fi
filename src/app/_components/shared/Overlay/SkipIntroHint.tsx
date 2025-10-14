@@ -97,7 +97,7 @@ const SkipIntroHint = () => {
       className={`fixed ${isMobile ? "bottom-[47px]" : "bottom-[21px]"} left-1/2 flex -translate-x-1/2 flex-col items-center gap-3.5`}
     >
       <p
-        className={`font-inter text-[23px] ${isHolding ? "text-white" : "text-white/30"} select-none`}
+        className={`font-mono text-[23px] ${isHolding ? "text-white" : "text-white/30"} select-none`}
         style={{ letterSpacing: "0.5px" }}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUpOrLeave}

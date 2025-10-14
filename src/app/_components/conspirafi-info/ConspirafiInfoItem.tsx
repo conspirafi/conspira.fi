@@ -31,7 +31,6 @@ const ConspirafiInfoItem: React.FC<IConspiraInfo> = ({
             src={imgSrc || ""}
             alt={imgSrc || ""}
             loading="lazy"
-            quality={80}
           />
         </div>
 
