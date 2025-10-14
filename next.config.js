@@ -6,6 +6,7 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
+  crossOrigin: "use-credentials",
   images: {
     remotePatterns: [
       {

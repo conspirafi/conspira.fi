@@ -55,7 +55,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ title, spec, link }) => {
               rel="noopener noreferrer"
               className="group pointer-events-auto inline-flex items-center gap-x-2 border-b border-gray-500 pb-1 text-lg text-white transition-colors hover:border-white"
             >
-              Prediciton market on PMX
+              Prediction market on PMX
               <LinkIcon />
             </a>
           </InfoRow>

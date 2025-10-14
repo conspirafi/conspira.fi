@@ -55,8 +55,21 @@ const VideoPlayerWithEQ: React.FC = () => {
 
     video.src = videoSrc;
     video.load();
-    video.play().catch();
 
+    const tryPlay = () => {
+      video.play().catch((err) => {
+        console.warn("Video play interrupted:", err);
+      });
+    };
+
+    if (video.readyState >= 2) {
+      tryPlay();
+    } else {
+      video.oncanplay = () => {
+        tryPlay();
+        video.oncanplay = null;
+      };
+    }
     setVideoElement(video);
 
     const handleVisibilityChange = () => {
@@ -131,6 +144,7 @@ const VideoPlayerWithEQ: React.FC = () => {
         <video
           ref={videoRef}
           loop={!isOnboarding}
+          crossOrigin="anonymous"
           playsInline
           autoPlay
           muted
