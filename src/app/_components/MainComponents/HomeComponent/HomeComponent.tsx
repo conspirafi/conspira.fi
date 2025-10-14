@@ -11,6 +11,7 @@ import { FundingStateComponent } from "../FundingStateComponent/FundingStateComp
 import { useEventCasesStore } from "~/app/store/useEventStore";
 import { type Easing, AnimatePresence, motion } from "framer-motion";
 import { useOnboardingStore } from "~/app/store/onboardingStore";
+import ConspirafiInfo from "../../conspirafi-info/ConspirafiInfo";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -130,6 +131,8 @@ const HomeComponent: React.FC = () => {
           </AnimatePresence>
 
           {activeEventCase?.isActive && <FullScreenSpawner />}
+
+          <ConspirafiInfo />
         </main>
       )}
     </Overlay>

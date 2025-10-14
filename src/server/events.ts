@@ -34,6 +34,7 @@ export const EventSchema = z.object({
     JUPITER: z.string().or(z.null()),
   }),
   isActive: z.boolean(),
+  conspiraInfoId: z.string(),
 });
 
 export type IEventSchema = z.infer<typeof EventSchema>;
@@ -57,6 +58,7 @@ export const events: IEventSchema[] = [
       PMX: null,
       JUPITER: null,
     },
+    conspiraInfoId: "0",
     isActive: true,
   },
   {
@@ -77,6 +79,7 @@ export const events: IEventSchema[] = [
       PMX: null,
       JUPITER: null,
     },
+    conspiraInfoId: "1",
     isActive: false,
   },
 ];
