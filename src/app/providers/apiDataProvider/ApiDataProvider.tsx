@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type ReactNode, useMemo, useEffect, useState } from "react";
+import React, { type ReactNode, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { ApiDataContext } from "./ApiDataContext";
 import { useEventCasesStore } from "~/app/store/useEventStore";
@@ -12,17 +12,9 @@ interface ApiDataProviderProps {
 export const ApiDataProvider: React.FC<ApiDataProviderProps> = ({
   children,
 }) => {
-  const [previewId, setPreviewId] = useState<string | undefined>(undefined);
   const { activeEventCase } = useEventCasesStore();
 
-  useEffect(() => {
-    // Check for preview parameter in URL
-    const params = new URLSearchParams(window.location.search);
-    const preview = params.get("preview");
-    if (preview) {
-      setPreviewId(preview);
-    }
-  }, []);
+  // Note: Preview functionality is handled in loader.tsx component
 
   // Get marketSlug from active event case
   const marketSlug = activeEventCase?.marketSlug || "";

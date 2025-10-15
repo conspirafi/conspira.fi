@@ -30,7 +30,6 @@ import {
   useRedirect,
   bwLightTheme,
   bwDarkTheme,
-  Button,
 } from "react-admin";
 import React, { useState } from "react";
 import Image from "next/image";
