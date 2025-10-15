@@ -72,8 +72,11 @@ Visit [http://localhost:3000](http://localhost:3000)
 Create a `.env` file with the following variables:
 
 ```env
-# Database (SQLite for local development)
+# Database 
+# For local development with SQLite:
 DATABASE_URL="file:./prisma/dev.db"
+# For production with PostgreSQL (Supabase):
+# DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?pgbouncer=true&sslmode=require"
 
 # Admin Panel Password
 ADMIN_PASSWORD="your-secure-password"
