@@ -194,7 +194,7 @@ HISTORIC_PRICES_API_URL="https://streamer-production-3d21.up.railway.app/api/pri
 
 ### 3. Deploy to Vercel
 
-**Important**: Vercel will automatically detect and use pnpm from the `pnpm-lock.yaml` file.
+The project includes a `vercel.json` configuration file that handles the deployment setup automatically.
 
 ```bash
 # Push to GitHub
@@ -206,7 +206,10 @@ git push origin main
 vercel --prod
 ```
 
-**Note**: If you encounter React version conflicts during deployment, the project is configured with pnpm overrides to handle React 19 compatibility.
+**Troubleshooting Deployment**:
+- If you see pnpm registry errors, the project will automatically install pnpm during deployment
+- The build command includes Prisma migrations
+- React 19 compatibility is handled via pnpm overrides
 
 ### 4. Initialize Production Database
 
