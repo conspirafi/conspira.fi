@@ -11,7 +11,7 @@ Conspira.fi is a prediction market platform that transforms conspiracy theories 
 ### Prerequisites
 
 - **Node.js 18+** (we recommend using [nvm](https://github.com/nvm-sh/nvm))
-- **pnpm 9+** (`npm install -g pnpm`)
+- **npm 9+** (comes with Node.js)
 - **API Keys** (see Getting API Keys section below)
 
 ### Local Development Setup
@@ -20,7 +20,7 @@ Conspira.fi is a prediction market platform that transforms conspiracy theories 
 ```bash
 git clone https://github.com/yourusername/conspira.fi.git
 cd conspira.fi
-pnpm install
+npm install
 ```
 
 2. **Set Up Environment Variables**
@@ -47,7 +47,7 @@ npx prisma db seed
 
 4. **Start Development Server**
 ```bash
-pnpm dev
+npm run dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000)
@@ -207,9 +207,9 @@ vercel --prod
 ```
 
 **Troubleshooting Deployment**:
-- If you see pnpm registry errors, the project will automatically install pnpm during deployment
+- The project uses npm with `--legacy-peer-deps` flag for React 19 compatibility
 - The build command includes Prisma migrations
-- React 19 compatibility is handled via pnpm overrides
+- Ensure all environment variables are set in Vercel
 
 ### 4. Initialize Production Database
 

@@ -73,8 +73,10 @@
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
-  "pnpm": {
-    "overrides": {
+  "overrides": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@hello-pangea/dnd": {
       "react": "^19.0.0",
       "react-dom": "^19.0.0"
     }
