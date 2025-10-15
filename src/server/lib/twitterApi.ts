@@ -121,7 +121,7 @@ export async function fetchTweetsByPhrase(
   try {
     const response = await roClient.v2.search({
       query: phrase,
-      max_results: 10,
+      max_results: 100, // Increased from 10 to 100 for more variety
       expansions: [
         "author_id",
         "attachments.media_keys",

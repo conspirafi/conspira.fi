@@ -4,9 +4,6 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import { LoaderProvider } from "./providers/LoaderProvider";
-import { ApiDataProvider } from "./providers/apiDataProvider/ApiDataProvider";
-import { ViewportProvider } from "./providers/ViewportProvider";
 
 const siteUrl = "https://conspira.fi";
 const title = "Conspira.fi - Conspiracy Prediction Markets";
@@ -56,13 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body>
-        <TRPCReactProvider>
-          <ApiDataProvider>
-            <ViewportProvider>
-              <LoaderProvider>{children}</LoaderProvider>
-            </ViewportProvider>
-          </ApiDataProvider>
-        </TRPCReactProvider>
+        <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
   );

@@ -10,7 +10,7 @@ import { useViewport } from "~/app/providers/ViewportProvider";
 import type { OverlayProps } from "~/app/interfaces/overlay-interfaces";
 
 import OverlayMobile from "./OverlayMobile/OverlayMobile";
-import OverlayDesktop from "./OverlayDecktop/OverlayDesktop";
+import OverlayDesktop from "./OverlayDesktop/OverlayDesktop";
 
 const Overlay: React.FC<OverlayProps> = (props) => {
   const { isMobile, isDesktop } = useViewport();

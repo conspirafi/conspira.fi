@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { IEventSchema } from "~/server/events";
+import type { IEventSchema } from "~/server/types";
 import type { ITweetFullData } from "~/server/lib/twitterApi";
 
 type IEventSchemaWithTweets = IEventSchema & {

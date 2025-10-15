@@ -8,6 +8,8 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    DATABASE_URL: z.string().min(1),
+    ADMIN_PASSWORD: z.string().min(1),
     TWITTER_BEARER_TOKEN: z.string().min(1),
     XAI_API_KEY: z.string().min(1),
     PMX_API_KEY: z.string().min(1),
@@ -15,9 +17,6 @@ export const env = createEnv({
     PMX_BASE_URL: z.string().url(),
     PMX_FEES_BASE_URL: z.string().min(1),
     HISTORIC_PRICES_API_URL: z.string().min(1),
-    HISTORIC_PRICES_API_YES_TOKEN_MINT: z.string().min(1),
-    HISTORIC_PRICES_API_NO_TOKEN_MINT: z.string().min(1),
-    MARKET_SLUG: z.string().min(1),
   },
 
   /**
@@ -35,6 +34,8 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    DATABASE_URL: process.env.DATABASE_URL,
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
     XAI_API_KEY: process.env.XAI_API_KEY,
     PMX_API_KEY: process.env.PMX_API_KEY,
     TWITTER_BEARER_TOKEN: process.env.TWITTER_BEARER_TOKEN,
@@ -42,11 +43,6 @@ export const env = createEnv({
     PMX_BASE_URL: process.env.PMX_BASE_URL,
     PMX_FEES_BASE_URL: process.env.PMX_FEES_BASE_URL,
     HISTORIC_PRICES_API_URL: process.env.HISTORIC_PRICES_API_URL,
-    HISTORIC_PRICES_API_YES_TOKEN_MINT:
-      process.env.HISTORIC_PRICES_API_YES_TOKEN_MINT,
-    HISTORIC_PRICES_API_NO_TOKEN_MINT:
-      process.env.HISTORIC_PRICES_API_NO_TOKEN_MINT,
-    MARKET_SLUG: process.env.MARKET_SLUG,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

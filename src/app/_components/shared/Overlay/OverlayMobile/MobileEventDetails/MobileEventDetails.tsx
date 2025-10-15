@@ -58,6 +58,9 @@ const VolumeElement: React.FC<VolumeElementProps> = ({ marketFees }) => {
 
 const MobileEventDetails: React.FC<MobileEventDetailsProps> = (props) => {
   const { isDesktop } = useViewport();
+  const pmxLink = props.data?.slug
+    ? `https://pmx.trade/markets/presale/${props.data.slug}`
+    : "";
 
   return (
     <div className="flex w-full items-center justify-start gap-8 text-white">
@@ -66,7 +69,7 @@ const MobileEventDetails: React.FC<MobileEventDetailsProps> = (props) => {
         isDesktop={isDesktop}
       />
       <VolumeElement marketFees={props.marketFees || undefined} />
-      <Marketlink link="https://pmx.trade/markets/presale/will-comet-3iatlas-show-evidence-of-alien-technology-20250926084948" />
+      {pmxLink && <Marketlink link={pmxLink} />}
     </div>
   );
 };

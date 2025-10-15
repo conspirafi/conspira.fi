@@ -1,7 +1,7 @@
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import type { AxiosResponse } from "axios";
 import z from "zod";
-import { events } from "~/server/events";
+import { prisma } from "~/server/db";
 import {
   historicPricesApiClient,
   pmxApiClient,
@@ -18,38 +18,80 @@ import type {
 } from "~/server/schemas";
 
 export const pmxMarketRouter = createTRPCRouter({
-  getEvents: publicProcedure.query(async () => {
-    const result = [];
-    for (const event of events) {
-      let tweets: ITweetFullData[] = [];
-
-      if (event.tweetSearchPhrase) {
-        const chachedTweets = await searchTweetsCached(event.tweetSearchPhrase);
-        tweets = chachedTweets.data;
-      }
-      result.push({ ...event, tweets });
-    }
-    return result;
-  }),
-  getPresaleMarketDetails: publicProcedure
-    .input(z.object({ marketSlug: z.string() }).optional())
+  getEvents: publicProcedure
+    .input(z.object({ previewId: z.string().optional() }).optional())
     .query(async ({ input }) => {
-      const { marketSlug } = input || { marketSlug: undefined };
+      const { previewId } = input || {};
+
+      const markets = await prisma.market.findMany({
+        where: previewId ? { id: previewId } : { isActive: true },
+        include: {
+          videos: { orderBy: { order: "asc" } },
+          conspiraInfos: { orderBy: { order: "asc" } },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      const result = [];
+      for (const market of markets) {
+        let tweets: ITweetFullData[] = [];
+
+        if (market.tweetSearchPhrase) {
+          const cachedTweets = await searchTweetsCached(
+            market.tweetSearchPhrase,
+          );
+          tweets = cachedTweets.data;
+        }
+
+        // Transform database format to match expected event format
+        const event = {
+          name: market.name,
+          eventVideo: market.videos[0]?.videoUrl ?? null,
+          eventTitle: market.eventTitle,
+          eventDescription: market.eventDescription,
+          marketSlug: market.marketSlug,
+          tweetSearchPhrase: market.tweetSearchPhrase,
+          historicPricesTokens: {
+            yesTokenMint: market.yesTokenMint,
+            noTokenMint: market.noTokenMint,
+          },
+          eventLinks: {
+            PMX: market.pmxLink ?? null,
+            JUPITER: market.jupiterLink ?? null,
+          },
+          isActive: market.isActive,
+          conspiraInfoId: market.id,
+          tweets,
+          // Include conspiraInfos for the new system
+          conspiraInfos: market.conspiraInfos.map((info) => ({
+            type: info.type as "youtube" | "article" | "podcast",
+            link: info.link ?? undefined,
+            imgSrc: info.imgSrc ?? undefined,
+            title: info.title,
+            date: info.date,
+          })),
+        };
+        result.push(event);
+      }
+      return result;
+    }),
+  getPresaleMarketDetails: publicProcedure
+    .input(z.object({ marketSlug: z.string() }))
+    .query(async ({ input }) => {
       const pmxMarketResponse = (await pmxApiClient.get(
-        `presale-markets?select=*&slug=eq.${marketSlug || process.env.MARKET_SLUG}`,
+        `presale-markets?select=*&slug=eq.${input.marketSlug}`,
       )) as AxiosResponse<IPMXGetPresaleMarketDetails[]>;
 
       return pmxMarketResponse.data[0];
     }),
   getFundingSnapshot: publicProcedure
-    .input(z.object({ marketSlug: z.string() }).optional())
+    .input(z.object({ marketSlug: z.string() }))
     .query(async ({ input }) => {
-      const { marketSlug } = input || { marketSlug: undefined };
       try {
         const pmxMarketFeesResponse = (await pmxFeesApiClient.post(
           `snapshot-funding-wallets`,
           {
-            marketSlug: marketSlug || process.env.MARKET_SLUG,
+            marketSlug: input.marketSlug,
           },
         )) as AxiosResponse<IFundingSnapshot>;
         return pmxMarketFeesResponse.data;
@@ -58,12 +100,11 @@ export const pmxMarketRouter = createTRPCRouter({
       }
     }),
   getMarket: publicProcedure
-    .input(z.object({ marketSlug: z.string() }).optional())
+    .input(z.object({ marketSlug: z.string() }))
     .query(async ({ input }) => {
-      const { marketSlug } = input || { marketSlug: undefined };
       try {
         const pmxMarketResponse = (await pmxApiClient.get(
-          `markets?select=*&slug=eq.${marketSlug || process.env.MARKET_SLUG}`,
+          `markets?select=*&slug=eq.${input.marketSlug}`,
         )) as AxiosResponse<IPMXGetMarket[]>;
         return pmxMarketResponse.data[0] || null;
       } catch {
@@ -71,12 +112,11 @@ export const pmxMarketRouter = createTRPCRouter({
       }
     }),
   getMarketFees: publicProcedure
-    .input(z.object({ marketSlug: z.string() }).optional())
+    .input(z.object({ marketSlug: z.string() }))
     .query(async ({ input }) => {
-      const { marketSlug } = input || { marketSlug: undefined };
       try {
         const pmxMarketFeesResponse = (await pmxFeesApiClient.get(
-          `markets/${marketSlug || process.env.MARKET_SLUG}/fees`,
+          `markets/${input.marketSlug}/fees`,
         )) as AxiosResponse<IPMXGetMarketFees>;
         return pmxMarketFeesResponse.data;
       } catch {
@@ -87,20 +127,18 @@ export const pmxMarketRouter = createTRPCRouter({
     .input(
       z.object({
         type: z.enum(["YES", "NO"]),
-        tokenMints: z
-          .object({ yesTokenMints: z.string(), noTokenMint: z.string() })
-          .optional(),
+        tokenMints: z.object({
+          yesTokenMints: z.string(),
+          noTokenMint: z.string(),
+        }),
         limit: z.number().optional(),
       }),
     )
     .query(async ({ input }) => {
-      const { tokenMints } = input;
       const tokenMint =
         input.type === "YES"
-          ? tokenMints?.yesTokenMints ||
-            process.env.HISTORIC_PRICES_API_YES_TOKEN_MINT
-          : tokenMints?.noTokenMint ||
-            process.env.HISTORIC_PRICES_API_NO_TOKEN_MINT;
+          ? input.tokenMints.yesTokenMints
+          : input.tokenMints.noTokenMint;
       const limit = input.limit ? input.limit : "7";
       const historyMarketResponse = (await historicPricesApiClient.get(
         `${tokenMint}/history?limit=${limit}`,

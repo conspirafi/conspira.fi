@@ -1,4 +1,4 @@
-"use-client";
+"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -117,11 +117,9 @@ export const FundingStateComponent: React.FC<FundingStateComponentProps> = (
           walletLink={props.data?.funding_wallet}
           isDesktop={isDesktop}
         />
-        {isDesktop && (
+        {isDesktop && props.data?.slug && (
           <a
-            href={
-              "https://pmx.trade/markets/presale/will-comet-3iatlas-show-evidence-of-alien-technology-20250926084948"
-            }
+            href={`https://pmx.trade/markets/presale/${props.data.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex h-14 items-center gap-2 rounded-xl bg-white px-6 text-black transition-transform hover:scale-105 active:scale-95"

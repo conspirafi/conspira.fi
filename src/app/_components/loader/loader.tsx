@@ -8,7 +8,20 @@ import { useViewport } from "~/app/providers/ViewportProvider";
 import { useEventCasesStore } from "~/app/store/useEventStore";
 
 const Loader = () => {
-  const { data: fetchedEvents } = api.pmxMarketRouter.getEvents.useQuery();
+  const [previewId, setPreviewId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    // Check for preview parameter in URL
+    const params = new URLSearchParams(window.location.search);
+    const preview = params.get("preview");
+    if (preview) {
+      setPreviewId(preview);
+    }
+  }, []);
+
+  const { data: fetchedEvents } = api.pmxMarketRouter.getEvents.useQuery(
+    previewId ? { previewId } : undefined,
+  );
   const { setEventCases, setActiveEventCase } = useEventCasesStore();
 
   const messages = [

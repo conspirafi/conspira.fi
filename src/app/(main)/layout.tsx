@@ -1,4 +1,6 @@
-// import DesktopOnlyGuard from "../_components/guards/DesktopOnlyGuard";
+import { ApiDataProvider } from "../providers/apiDataProvider/ApiDataProvider";
+import { ViewportProvider } from "../providers/ViewportProvider";
+import { LoaderProvider } from "../providers/LoaderProvider";
 
 export default function MainLayout({
   children,
@@ -6,8 +8,12 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <DesktopOnlyGuard>
-    <main className="relative">{children}</main>
-    // </DesktopOnlyGuard>
+    <ApiDataProvider>
+      <ViewportProvider>
+        <LoaderProvider>
+          <main className="relative">{children}</main>
+        </LoaderProvider>
+      </ViewportProvider>
+    </ApiDataProvider>
   );
 }

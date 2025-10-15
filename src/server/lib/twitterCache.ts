@@ -4,7 +4,7 @@ import { fetchTweetsByPhrase } from "./twitterApi";
 
 const cache = new LRUCache<string, any>({
   max: 10, // max 10 unique phrase in cache
-  ttl: 1000 * 60 * 60, // 60min in ms
+  ttl: 1000 * 60 * 15, // 15min in ms (reduced from 60min for fresher content)
 });
 
 export async function searchTweetsCached(phrase: string) {

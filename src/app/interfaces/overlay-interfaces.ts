@@ -2,7 +2,7 @@ import type {
   IPMXGetMarketFees,
   IPMXGetPresaleMarketDetails,
 } from "~/server/schemas";
-import type { IEventSchema } from "~/server/events";
+import type { IEventSchema } from "~/server/types";
 
 export interface OverlayProps {
   children?: React.ReactNode;

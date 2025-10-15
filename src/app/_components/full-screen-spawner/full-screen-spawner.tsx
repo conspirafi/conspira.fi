@@ -10,15 +10,18 @@ interface CardInstance {
   key: number;
   progress: number;
   style: React.CSSProperties;
+  isPaused?: boolean;
 }
 
 export default function FullScreenSpawner() {
   const { activeEventCase } = useEventCasesStore();
   const [activeCards, setActiveCards] = useState<CardInstance[]>([]);
+  const hoveredCardKey = useRef<number | null>(null);
   const cardKey = useRef(0);
   const tweets = activeEventCase?.tweets ?? [];
 
   const availableTweets = useRef<Set<string>>(new Set());
+  const recentlyShownTweets = useRef<Map<string, number>>(new Map()); // Track when tweets were last shown
   const pendingSpawns = useRef<number[]>([]);
   const lastSpawnTime = useRef(0);
   const velocity = useRef(0);
@@ -29,19 +32,33 @@ export default function FullScreenSpawner() {
   const lastTouchY = useRef<number | null>(null);
   const lastTouchTime = useRef<number | null>(null);
   const touchVelocity = useRef(0);
-  const BASE_AUTOPLAY_VELOCITY = 0.0019;
+  const BASE_AUTOPLAY_VELOCITY = 0.0008; // Further reduced for even more reading time
 
   const spawnCard = (initialProgress: 0 | 1) => {
     if (availableTweets.current.size === 0 || tweets.length === 0) return;
 
-    const ids = Array.from(availableTweets.current);
+    // Filter out tweets that were shown in the last 30 seconds
+    const now = Date.now();
+    const cooldownPeriod = 30000; // 30 seconds
+    const availableIds = Array.from(availableTweets.current).filter((id) => {
+      const lastShown = recentlyShownTweets.current.get(id);
+      return !lastShown || now - lastShown > cooldownPeriod;
+    });
+
+    // If no tweets available after cooldown filter, use all available
+    const ids =
+      availableIds.length > 0
+        ? availableIds
+        : Array.from(availableTweets.current);
+
     const randomId = ids[Math.floor(Math.random() * ids.length)];
     if (!randomId) return;
 
-    const tweet = tweets.find((t) => t.id === randomId);
+    const tweet = tweets.find((t: ITweetFullData) => t.id === randomId);
     if (!tweet) return;
 
     availableTweets.current.delete(randomId);
+    recentlyShownTweets.current.set(randomId, now);
 
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
@@ -71,7 +88,8 @@ export default function FullScreenSpawner() {
 
     setActiveCards([]);
     cardKey.current = 0;
-    availableTweets.current = new Set(tweets.map((t) => t.id));
+    availableTweets.current = new Set(tweets.map((t: ITweetFullData) => t.id));
+    recentlyShownTweets.current.clear(); // Clear cooldown tracking on event change
     velocity.current = 0;
     targetVelocity.current = 0;
     pendingSpawns.current.forEach(clearTimeout);
@@ -92,15 +110,36 @@ export default function FullScreenSpawner() {
       }
 
       setActiveCards((prev) => {
-        const updatedCards = prev.map((card) => ({
-          ...card,
-          progress: Math.max(0, Math.min(1, card.progress + effectiveVelocity)),
-        }));
+        const updatedCards = prev.map((card) => {
+          // If card is hovered, freeze it within safe boundaries
+          if (card.key === hoveredCardKey.current) {
+            // Clamp to safe range so it doesn't get removed
+            const safeProgress = Math.max(0.01, Math.min(0.99, card.progress));
+            return { ...card, progress: safeProgress };
+          }
+          // Otherwise update normally
+          return {
+            ...card,
+            progress: Math.max(
+              0,
+              Math.min(1, card.progress + effectiveVelocity),
+            ),
+          };
+        });
 
         const removed = updatedCards.filter(
           (card) => card.progress <= 0 || card.progress >= 1,
         );
-        removed.forEach((card) => availableTweets.current.add(card.data.id));
+        removed.forEach((card) => {
+          availableTweets.current.add(card.data.id);
+          // Clean up old cooldown entries (older than 60 seconds)
+          const now = Date.now();
+          recentlyShownTweets.current.forEach((timestamp, id) => {
+            if (now - timestamp > 60000) {
+              recentlyShownTweets.current.delete(id);
+            }
+          });
+        });
 
         const newCards = updatedCards.filter(
           (card) => card.progress > 0 && card.progress < 1,
@@ -110,21 +149,21 @@ export default function FullScreenSpawner() {
         if (
           newCards.length < 3 &&
           availableTweets.current.size > 0 &&
-          now - lastSpawnTime.current > 500
+          now - lastSpawnTime.current > 1500 // Even more spacing between spawns
         ) {
           const latestCard = newCards[newCards.length - 1];
           const spawnConditionForward =
-            latestCard && latestCard.progress > 0.3 + Math.random() * 0.2;
+            latestCard && latestCard.progress > 0.45 + Math.random() * 0.2; // Wait until card is further along
           const spawnConditionBackward =
-            latestCard && latestCard.progress < 0.7 - Math.random() * 0.2;
+            latestCard && latestCard.progress < 0.55 - Math.random() * 0.2; // More conservative backward spawn
 
           if (effectiveVelocity > 0 && spawnConditionForward) {
-            const delay = Math.random() * 1500 + 500;
+            const delay = Math.random() * 2500 + 1500; // Longer delays: 1500-4000ms
             const timeoutId = window.setTimeout(() => spawnCard(0), delay);
             pendingSpawns.current.push(timeoutId);
             lastSpawnTime.current = now + delay;
           } else if (effectiveVelocity < 0 && spawnConditionBackward) {
-            const delay = Math.random() * 1500 + 500;
+            const delay = Math.random() * 2500 + 1500; // Longer delays: 1500-4000ms
             const timeoutId = window.setTimeout(() => spawnCard(1), delay);
             pendingSpawns.current.push(timeoutId);
             lastSpawnTime.current = now + delay;
@@ -221,14 +260,16 @@ export default function FullScreenSpawner() {
       window.removeEventListener("touchend", handleTouchEnd);
       clearTimeout(initialSpawnTimeout);
     };
-  }, [activeEventCase]);
+  }, [activeEventCase]); // Removed hoveredCardKey from dependencies to prevent listener re-registration
 
   const getCardStyle = (progress: number, baseStyle: React.CSSProperties) => {
-    const scale = 0.2 + progress * 0.7;
+    const scale = 0.4 + progress * 0.9; // Even bigger - max scale now 1.3
     let opacity = 0;
-    if (progress < 0.2) opacity = progress / 0.2;
-    else if (progress > 0.8) opacity = 1 - (progress - 0.8) / 0.2;
-    else opacity = 1;
+    if (progress < 0.12)
+      opacity = progress / 0.12; // Very fast fade in
+    else if (progress > 0.88)
+      opacity = 1 - (progress - 0.88) / 0.12; // Very slow fade out
+    else opacity = 1; // Stay at full opacity even longer (0.12-0.88 = 76% of lifecycle)
 
     return {
       ...baseStyle,
@@ -245,14 +286,17 @@ export default function FullScreenSpawner() {
           key={card.key}
           style={getCardStyle(card.progress, card.style)}
           className="pointer-events-auto"
+          onMouseEnter={() => (hoveredCardKey.current = card.key)}
+          onMouseLeave={() => (hoveredCardKey.current = null)}
         >
           <TwitterCard
             avatar={card?.data?.user?.avatar || ""}
             name={card?.data?.user?.name || ""}
             username={card?.data?.user?.username || ""}
-            date={new Date(card?.data?.createdAt || "").toLocaleDateString()}
+            createdAt={card?.data?.createdAt || ""}
             text={card?.data?.text || ""}
             url={card?.data?.url || ""}
+            media={card?.data?.media || []}
           />
         </div>
       ))}
