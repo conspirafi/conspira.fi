@@ -75,8 +75,9 @@ Create a `.env` file with the following variables:
 # Database 
 # For local development with SQLite:
 DATABASE_URL="file:./prisma/dev.db"
-# For production with PostgreSQL (Supabase):
-# DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?pgbouncer=true&sslmode=require"
+# For production with PostgreSQL (Supabase) - use Transaction pooler:
+# DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:6543/postgres?pgbouncer=true"
+# DIRECT_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
 
 # Admin Panel Password
 ADMIN_PASSWORD="your-secure-password"
@@ -172,15 +173,19 @@ vercel env pull
 
 **Option B: External PostgreSQL (Supabase, Neon, etc.)**
 - Create a PostgreSQL database
-- Get the connection string
+- Get the connection strings:
+  - **For Supabase**: Go to Settings → Database → Connection string
+  - Use **Transaction pooler** (port 6543) for `DATABASE_URL`
+  - Use **Direct connection** (port 5432) for `DIRECT_URL`
 
 ### 2. Environment Variables in Vercel
 
 Go to your Vercel project settings and add:
 
 ```env
-# Database (PostgreSQL connection string)
-DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=require"
+# Database (Supabase PostgreSQL - use Transaction pooler)
+DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
 
 # Admin Panel
 ADMIN_PASSWORD="use-a-very-secure-password-here"
