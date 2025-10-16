@@ -5,11 +5,8 @@
 /.pnp
 .pnp.js
 
-# pnpm
+# lock files (keep package-lock.json for npm)
 pnpm-lock.yaml
-
-# lock files (using pnpm)
-package-lock.json
 yarn.lock
 
 # prisma

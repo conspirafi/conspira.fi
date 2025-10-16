@@ -32,10 +32,7 @@ export const metadataRouter = createTRPCRouter({
         console.log("Successfully fetched HTML, length:", html.length);
 
         // Extract OG tags using improved regex patterns
-        const metaTagRegex = (
-          property: string,
-          attribute = "property",
-        ) => {
+        const metaTagRegex = (property: string, attribute = "property") => {
           const patterns = [
             new RegExp(
               `<meta\\s+${attribute}=["']${property}["']\\s+content=["']([^"']+)["']`,

@@ -14,13 +14,40 @@ Conspira.fi is a prediction market platform that transforms conspiracy theories 
 - **npm 9+** (comes with Node.js)
 - **API Keys** (see Getting API Keys section below)
 
-### Local Development Setup
+### Development Options
+
+You have two ways to set up the development environment:
+
+#### Option A: Dev Container (Recommended)
+
+The easiest way to get started with a production-like environment using Docker:
+
+**Prerequisites:**
+- Docker Desktop
+- VS Code with "Dev Containers" extension
+
+**Setup:**
+1. Open this project in VS Code
+2. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
+3. Select "Dev Containers: Reopen in Container"
+4. Wait for automatic setup (dependencies, database, migrations)
+5. Run `npm run dev` when ready
+
+✨ Benefits:
+- PostgreSQL 16 (same as production)
+- Automatic database setup
+- Production-like environment
+- No local PostgreSQL installation needed
+
+See [.devcontainer/README.md](.devcontainer/README.md) for detailed documentation.
+
+#### Option B: Local Development Setup
 
 1. **Clone and Install Dependencies**
 ```bash
 git clone https://github.com/yourusername/conspira.fi.git
 cd conspira.fi
-npm install
+npm install --legacy-peer-deps
 ```
 
 2. **Set Up Environment Variables**
@@ -36,13 +63,13 @@ touch .env
 3. **Initialize Database**
 ```bash
 # Generate Prisma client
-npx prisma generate
+npm run db:generate
 
 # Run migrations to create database schema
-npx prisma migrate dev
+npm run db:migrate
 
 # Seed database with initial data (creates example market)
-npx prisma db seed
+npm run db:seed
 ```
 
 4. **Start Development Server**
@@ -75,9 +102,10 @@ Create a `.env` file with the following variables:
 # Database 
 # For local development with SQLite:
 DATABASE_URL="file:./prisma/dev.db"
-# For production with PostgreSQL (Supabase) - use Transaction pooler:
-# DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:6543/postgres?pgbouncer=true"
-# DIRECT_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
+# For local development with devcontainer (PostgreSQL):
+# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/conspirafi?schema=public"
+# For production with PostgreSQL (Supabase):
+# DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@[project-ref].supabase.co:5432/postgres?pgbouncer=true&connection_limit=1"
 
 # Admin Panel Password
 ADMIN_PASSWORD="your-secure-password"
@@ -96,6 +124,11 @@ PMX_FEES_BASE_URL="https://backend-production-2715.up.railway.app/api/"
 
 # Historic Prices API (Required for price charts)
 HISTORIC_PRICES_API_URL="https://streamer-production-3d21.up.railway.app/api/prices/"
+
+# Supabase (Optional - for file uploads in production)
+NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 ```
 
 ## 🔐 Admin Panel
@@ -155,37 +188,37 @@ Test markets before going live:
 - Use the "Preview Market" button in admin
 - Or visit: `http://localhost:3000/?preview=MARKET_ID`
 
-## 🚀 Production Deployment (Vercel)
+## 🚀 Production Deployment (Vercel + Supabase)
 
-### 1. Database Setup
+For detailed deployment instructions, see **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**
 
-Choose one of these options:
+### Quick Deployment Guide
 
-**Option A: Vercel Postgres**
-```bash
-# Install Vercel CLI
-npm i -g vercel
+1. **Set up Supabase Database**
+   - Create a Supabase project
+   - Get the connection string with `pgbouncer=true&connection_limit=1`
+   - Run migrations: `npm run db:migrate:deploy`
 
-# Link project and create database
-vercel link
-vercel env pull
-```
+2. **Configure Supabase Storage (for image uploads)**
+   - Create `admin-uploads` bucket
+   - Set up public access policies
+   - Get API credentials
 
-**Option B: External PostgreSQL (Supabase, Neon, etc.)**
-- Create a PostgreSQL database
-- Get the connection strings:
-  - **For Supabase**: Go to Settings → Database → Connection string
-  - Use **Transaction pooler** (port 6543) for `DATABASE_URL`
-  - Use **Direct connection** (port 5432) for `DIRECT_URL`
+3. **Deploy to Vercel**
+   - Connect your repository
+   - Set environment variables (see below)
+   - Deploy automatically on push
 
-### 2. Environment Variables in Vercel
-
-Go to your Vercel project settings and add:
+4. **Environment Variables in Vercel**
 
 ```env
-# Database (Supabase PostgreSQL - use Transaction pooler)
-DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:6543/postgres?pgbouncer=true"
-DIRECT_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
+# Database (IMPORTANT: use connection pooling)
+DATABASE_URL="postgresql://postgres:[password]@[project-ref].supabase.co:5432/postgres?pgbouncer=true&connection_limit=1"
+
+# Supabase Storage (for persistent file uploads)
+NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 
 # Admin Panel
 ADMIN_PASSWORD="use-a-very-secure-password-here"
@@ -200,55 +233,29 @@ PMX_FEES_BASE_URL="https://backend-production-2715.up.railway.app/api/"
 HISTORIC_PRICES_API_URL="https://streamer-production-3d21.up.railway.app/api/prices/"
 ```
 
-### 3. Deploy to Vercel
+### Troubleshooting Production Issues
 
-The project includes a `vercel.json` configuration file that handles the deployment setup automatically.
+**"Prepared statement already exists" error:**
+- Ensure `DATABASE_URL` includes `pgbouncer=true&connection_limit=1`
+- See [docs/DATABASE_CONNECTION.md](docs/DATABASE_CONNECTION.md) for detailed solutions
 
-```bash
-# Push to GitHub
-git add .
-git commit -m "Deploy to production"
-git push origin main
-
-# Deploy (if not auto-deploying)
-vercel --prod
-```
-
-**Troubleshooting Deployment**:
-- The project uses npm with `--legacy-peer-deps` flag for React 19 compatibility
-- The build command includes Prisma migrations
-- Ensure all environment variables are set in Vercel
-
-### 4. Initialize Production Database
-
-After first deployment:
-
-```bash
-# Run migrations on production
-npx prisma migrate deploy
-
-# Optional: Seed with initial data
-npx prisma db seed
-```
-
-### 5. Post-Deployment
-
-- Access admin panel at `https://yourdomain.com/admin/login`
-- Create your first market following the steps above
-- Monitor logs in Vercel dashboard
+**Image uploads failing (500 error):**
+- Configure Supabase Storage (recommended for production)
+- Without Supabase Storage, uploads use `/tmp` (ephemeral on Vercel)
+- See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for Supabase Storage setup
 
 ## 🛠️ Database Commands
 
 ```bash
 # Development
-npx prisma generate          # Generate Prisma client
-npx prisma migrate dev       # Create and apply migrations
-npx prisma migrate reset     # Reset database (WARNING: deletes all data)
-npx prisma studio           # Open GUI to view/edit data
-npx prisma db seed          # Seed database with initial data
+npm run db:generate           # Generate Prisma client
+npm run db:migrate            # Create and apply migrations
+npm run db:migrate -- --reset # Reset database (WARNING: deletes all data)
+npm run db:studio             # Open GUI to view/edit data
+npm run db:seed               # Seed database with initial data
 
 # Production
-npx prisma migrate deploy    # Apply migrations in production
+npm run db:migrate:deploy     # Apply migrations in production
 ```
 
 ## 💻 Tech Stack

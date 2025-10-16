@@ -17,6 +17,8 @@ export const env = createEnv({
     PMX_BASE_URL: z.string().url(),
     PMX_FEES_BASE_URL: z.string().min(1),
     HISTORIC_PRICES_API_URL: z.string().min(1),
+    // Optional Supabase credentials for file uploads in production
+    SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   },
 
   /**
@@ -25,7 +27,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    // Optional Supabase URL for file uploads
+    NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
   },
 
   /**
@@ -43,7 +46,8 @@ export const env = createEnv({
     PMX_BASE_URL: process.env.PMX_BASE_URL,
     PMX_FEES_BASE_URL: process.env.PMX_FEES_BASE_URL,
     HISTORIC_PRICES_API_URL: process.env.HISTORIC_PRICES_API_URL,
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
