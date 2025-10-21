@@ -72,7 +72,7 @@ export const TradeInComponent = (props: TradeInProps) => {
       props.marketFees.totalFees &&
       typeof props.marketFees.totalFees.total === "number"
     ) {
-      return roundToTwoDecimals(props.marketFees.totalFees.total * 25);
+      return roundToTwoDecimals(props.marketFees.totalFees.total * 33.33);
     }
     return 0;
   }, [props.marketFees]);
