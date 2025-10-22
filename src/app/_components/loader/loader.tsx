@@ -9,18 +9,23 @@ import { useEventCasesStore } from "~/app/store/useEventStore";
 
 const Loader = () => {
   const [previewId, setPreviewId] = useState<string | undefined>(undefined);
+  const [marketSlug, setMarketSlug] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    // Check for preview parameter in URL
+    // Check for preview or slug parameter in URL
     const params = new URLSearchParams(window.location.search);
     const preview = params.get("preview");
+    const slug = params.get("slug");
+
     if (preview) {
       setPreviewId(preview);
+    } else if (slug) {
+      setMarketSlug(slug);
     }
   }, []);
 
   const { data: fetchedEvents } = api.pmxMarketRouter.getEvents.useQuery(
-    previewId ? { previewId } : undefined,
+    previewId ? { previewId } : marketSlug ? { marketSlug } : undefined,
   );
   const { setEventCases, setActiveEventCase } = useEventCasesStore();
 

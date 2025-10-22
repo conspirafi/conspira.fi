@@ -204,7 +204,14 @@ The admin panel allows you to manage multiple prediction markets, videos, and co
 Test markets before going live:
 
 - Use the "Preview Market" button in admin
-- Or visit: `http://localhost:3000/?preview=MARKET_ID`
+- Or visit: `http://localhost:3000/preview/MARKET_ID`
+
+### Direct Market Access
+
+Share specific markets with clean URLs:
+
+- Visit: `http://localhost:3000/m/MARKET_SLUG`
+- Example: `http://localhost:3000/m/will-comet-3iatlas-show-evidence-of-alien-technology-20250926084948`
 
 ## 🚀 Production Deployment (Railway)
 

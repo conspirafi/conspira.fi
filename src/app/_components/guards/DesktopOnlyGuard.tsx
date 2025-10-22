@@ -72,13 +72,30 @@ const MobileMessage = () => {
       >
         {content.body?.line1}
       </p>
-      <p
-        className={`font-inter mt-2 max-w-xs text-sm text-[#98A2AF] ${
-          isSignalLocked ? "font-mono-manual" : "font-inter"
-        }`}
-      >
-        {content.body?.line2}
-      </p>
+      {content.body?.line2 && (
+        <>
+          {content.body.line2.includes("Powered by") ? (
+            <a
+              href="https://solo.to/agentmock"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`font-inter mt-2 block max-w-xs text-sm text-[#98A2AF] underline opacity-60 duration-300 hover:opacity-100 ${
+                isSignalLocked ? "font-mono-manual" : "font-inter"
+              }`}
+            >
+              {content.body.line2}
+            </a>
+          ) : (
+            <p
+              className={`font-inter mt-2 max-w-xs text-sm text-[#98A2AF] ${
+                isSignalLocked ? "font-mono-manual" : "font-inter"
+              }`}
+            >
+              {content.body.line2}
+            </p>
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -12,9 +12,15 @@ const config = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Disable static page generation globally to avoid react-admin build issues
-  generateBuildId: async () => {
-    return "build-" + Date.now();
+  webpack: (config, { isServer }) => {
+    // Ignore react-admin's Html import warning
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
   },
   crossOrigin: "use-credentials",
   images: {
