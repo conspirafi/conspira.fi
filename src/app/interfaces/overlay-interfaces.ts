@@ -13,7 +13,7 @@ export interface OverlayProps {
 export interface EventDetailsProps {
   title: string;
   spec: string;
-  link: string;
+  pmxLink: string;
 }
 
 export interface EventTimerProps {

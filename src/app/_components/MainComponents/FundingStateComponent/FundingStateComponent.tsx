@@ -117,7 +117,7 @@ export const FundingStateComponent: React.FC<FundingStateComponentProps> = (
           walletLink={props.data?.funding_wallet}
           isDesktop={isDesktop}
         />
-        {isDesktop && props.data?.slug && (
+        {isDesktop && props.data && (
           <a
             href={`https://pmx.trade/markets/presale/${props.data.slug}`}
             target="_blank"

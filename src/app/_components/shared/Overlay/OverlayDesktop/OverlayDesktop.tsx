@@ -51,7 +51,7 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
                       <EventDetails
                         title={activeEventCase.eventTitle || "CONSPIRA.FI"}
                         spec={activeEventCase.eventDescription}
-                        link={activeEventCase.marketSlug}
+                        pmxLink={activeEventCase.eventLinks.PMX || ""}
                       />
                     </motion.div>
                   )}

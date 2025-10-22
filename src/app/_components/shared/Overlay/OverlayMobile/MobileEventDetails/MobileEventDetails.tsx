@@ -62,9 +62,8 @@ const VolumeElement: React.FC<VolumeElementProps> = ({
 
 const MobileEventDetails: React.FC<MobileEventDetailsProps> = (props) => {
   const { isDesktop } = useViewport();
-  const pmxLink = props.data?.slug
-    ? `https://pmx.trade/markets/presale/${props.data.slug}`
-    : "";
+  // Use PMX link from event data (already dynamic based on market status)
+  const pmxLink = props.activeEventCase?.eventLinks.PMX || "";
 
   return (
     <div className="flex w-full items-center justify-start gap-8 text-white">

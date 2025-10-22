@@ -18,6 +18,7 @@ export const EventSchema = z.object({
     JUPITER_YES: z.string().or(z.null()).optional(),
     JUPITER_NO: z.string().or(z.null()).optional(),
   }),
+  isPMXActive: z.boolean().optional(),
   volumePercentage: z.number().default(33.33),
   isActive: z.boolean(),
   conspiraInfoId: z.string(),
