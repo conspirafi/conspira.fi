@@ -57,16 +57,20 @@ export const pmxMarketRouter = createTRPCRouter({
         // Fetch token mints dynamically from PMX API (not stored in DB)
         let yesTokenMint = "";
         let noTokenMint = "";
-
+        let isActivePMXMarket = false;
+        
         try {
           const pmxResponse = (await pmxApiClient.get(
             `markets?select=*&slug=eq.${market.marketSlug}`,
           )) as AxiosResponse<IPMXGetMarket[]>;
 
           const pmxMarket = pmxResponse.data[0];
-          if (pmxMarket?.cas?.YES?.tokenMint && pmxMarket?.cas?.NO?.tokenMint) {
-            yesTokenMint = pmxMarket.cas.YES.tokenMint;
-            noTokenMint = pmxMarket.cas.NO.tokenMint;
+          if (pmxMarket) {
+            isActivePMXMarket = true;
+            if (pmxMarket.cas?.YES?.tokenMint && pmxMarket.cas?.NO?.tokenMint) {
+              yesTokenMint = pmxMarket.cas.YES.tokenMint;
+              noTokenMint = pmxMarket.cas.NO.tokenMint;
+            }
           }
         } catch (error) {
           // Market might still be in presale or API error
@@ -111,8 +115,10 @@ export const pmxMarketRouter = createTRPCRouter({
           ? `https://jup.ag/tokens/${noTokenMint}`
           : null;
 
-        // Generate PMX link from market slug
-        const pmxLink = `https://pmx.trade/markets/${market.marketSlug}`;
+        // Generate PMX link from market slug - dynamic based on market status
+        const pmxLink = isActivePMXMarket
+          ? `https://pmx.trade/markets/${market.marketSlug}`
+          : `https://pmx.trade/markets/presale/${market.marketSlug}`;
 
         // Transform database format to match expected event format
         const event = {
@@ -133,6 +139,7 @@ export const pmxMarketRouter = createTRPCRouter({
             JUPITER_YES: jupiterYesLink,
             JUPITER_NO: jupiterNoLink,
           },
+          isPMXActive: isActivePMXMarket,
           volumePercentage: market.volumePercentage,
           isActive: market.isActive,
           conspiraInfoId: market.id,

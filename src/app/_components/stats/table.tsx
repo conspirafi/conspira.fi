@@ -9,6 +9,7 @@ import PlatformButton from "../buttons/platform-btn";
 
 interface StatsTableProps {
   marketSlug: string;
+  pmxLink: string;
   yesHistory: IMarketHistory | undefined;
   noHistory: IMarketHistory | undefined;
   onClose: () => void;
@@ -51,7 +52,7 @@ const StatsTable: React.FC<StatsTableProps> = (props) => {
   const openTrade = (type: "PMX" | "JUPITER") => {
     switch (type) {
       case "PMX":
-        window.open(`https://pmx.trade/markets/${props.marketSlug}`, "_blank");
+        window.open(props.pmxLink, "_blank");
         break;
       case "JUPITER":
         // Use the correct token mint based on selected outcome

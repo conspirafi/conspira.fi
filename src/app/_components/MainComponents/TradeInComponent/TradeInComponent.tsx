@@ -15,6 +15,7 @@ import { cn } from "@sglara/cn";
 import { AnimatePresence, motion } from "framer-motion";
 import ShowLeaksBtn from "../../buttons/show-leaks-btn";
 import { useConspirafiStore } from "~/app/store/conspirafiStore";
+import { useEventCasesStore } from "~/app/store/useEventStore";
 
 const conspirafiVariants = {
   hidden: { opacity: 0, scale: 0.95 },
@@ -46,6 +47,7 @@ function splitData(
 
 export const TradeInComponent = (props: TradeInProps) => {
   const { isVisible: isConspirafiVisible } = useConspirafiStore();
+  const { activeEventCase } = useEventCasesStore();
 
   const { isMobile, isDesktop } = useViewport();
   const [showTable, setShowTable] = useState(false);
@@ -140,6 +142,7 @@ export const TradeInComponent = (props: TradeInProps) => {
             yesHistory={props.yesHistory}
             noHistory={props.noHistory}
             marketSlug={props.market?.slug || ""}
+            pmxLink={activeEventCase?.eventLinks.PMX || ""}
             selectedOutcome={selectedOutcome}
             yesTokenMint={props.market?.cas?.YES?.tokenMint || ""}
             noTokenMint={props.market?.cas?.NO?.tokenMint || ""}
