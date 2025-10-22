@@ -19,12 +19,32 @@ import type {
 
 export const pmxMarketRouter = createTRPCRouter({
   getEvents: publicProcedure
-    .input(z.object({ previewId: z.string().optional() }).optional())
+    .input(
+      z
+        .object({
+          previewId: z.string().optional(),
+          marketSlug: z.string().optional(),
+        })
+        .optional(),
+    )
     .query(async ({ input }) => {
-      const { previewId } = input || {};
+      const { previewId, marketSlug } = input || {};
+
+      // Determine query filter based on input
+      let whereClause: any;
+      if (previewId) {
+        // Preview mode: get specific market by ID
+        whereClause = { id: previewId };
+      } else if (marketSlug) {
+        // Direct access: get specific market by slug
+        whereClause = { marketSlug, isActive: true };
+      } else {
+        // Default: get all active markets
+        whereClause = { isActive: true };
+      }
 
       const markets = await prisma.market.findMany({
-        where: previewId ? { id: previewId } : { isActive: true },
+        where: whereClause,
         include: {
           videos: { orderBy: { order: "asc" } },
           conspiraInfos: { orderBy: { order: "asc" } },

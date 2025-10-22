@@ -42,7 +42,7 @@ const PreviewButton = () => {
   if (!record) return null;
 
   const handlePreview = () => {
-    window.open(`/?preview=${record.id}`, "_blank");
+    window.open(`/preview/${record.id}`, "_blank");
   };
 
   return (

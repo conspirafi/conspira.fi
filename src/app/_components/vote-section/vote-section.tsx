@@ -36,9 +36,14 @@ export default function VoteSection(props: VoteSectionProps) {
                 ${props.volume}
               </span>
             </div>
-            <span className="text-[12px] opacity-20">
+            <a
+              href="https://solo.to/agentmock"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[12px] opacity-20 duration-300 hover:opacity-100"
+            >
               Powered by Agent $MOCK
-            </span>
+            </a>
           </div>
         )}
         <VoteBtn
@@ -49,9 +54,14 @@ export default function VoteSection(props: VoteSectionProps) {
         />
       </div>
       {isMobile && (
-        <span className="mt-4 mb-3 text-center text-[12px] opacity-30">
+        <a
+          href="https://solo.to/agentmock"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 mb-3 text-center text-[12px] opacity-30 duration-300 hover:opacity-100"
+        >
           Powered by Agent $MOCK
-        </span>
+        </a>
       )}
     </div>
   );

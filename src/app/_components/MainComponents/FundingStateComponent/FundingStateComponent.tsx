@@ -131,10 +131,10 @@ export const FundingStateComponent: React.FC<FundingStateComponentProps> = (
       </div>
 
       <a
-        href="https://dexscreener.com/solana/ee7o1zq7w5c65aapgvjnq4pa7lxhhaigjnjohqarvbcx"
+        href="https://solo.to/agentmock"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-[12px] underline opacity-30 transition-opacity hover:opacity-60"
+        className="text-[12px] underline opacity-30 duration-300 hover:opacity-100"
       >
         Powered by Agent $MOCK
       </a>
