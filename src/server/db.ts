@@ -4,7 +4,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// Configure Prisma for production (Vercel/Supabase) with connection pooling
+// Configure Prisma for production (Railway) with connection pooling
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({

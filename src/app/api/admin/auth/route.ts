@@ -21,7 +21,7 @@ function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
   }
 
   const current = loginAttempts.get(ip);
-  
+
   if (!current) {
     // First attempt
     loginAttempts.set(ip, {
@@ -49,10 +49,10 @@ export async function POST(request: Request) {
 
   if (!rateLimit.allowed) {
     return NextResponse.json(
-      { 
-        error: `Too many login attempts. Please try again in ${rateLimit.retryAfter} seconds.` 
+      {
+        error: `Too many login attempts. Please try again in ${rateLimit.retryAfter} seconds.`,
       },
-      { 
+      {
         status: 429,
         headers: {
           "Retry-After": String(rateLimit.retryAfter),

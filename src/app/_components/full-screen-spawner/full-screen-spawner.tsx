@@ -22,9 +22,15 @@ export default function FullScreenSpawner() {
 
   // Debug: Log tweets when component mounts or activeEventCase changes
   useEffect(() => {
-    console.log('[FullScreenSpawner] Active event case:', activeEventCase?.name);
-    console.log('[FullScreenSpawner] Tweets available:', tweets.length);
-    console.log('[FullScreenSpawner] Tweet search phrase:', activeEventCase?.tweetSearchPhrase);
+    console.log(
+      "[FullScreenSpawner] Active event case:",
+      activeEventCase?.name,
+    );
+    console.log("[FullScreenSpawner] Tweets available:", tweets.length);
+    console.log(
+      "[FullScreenSpawner] Tweet search phrase:",
+      activeEventCase?.tweetSearchPhrase,
+    );
   }, [activeEventCase, tweets.length]);
 
   const availableTweets = useRef<Set<string>>(new Set());

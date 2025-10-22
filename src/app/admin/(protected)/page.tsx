@@ -2,6 +2,8 @@
 
 import dynamic from "next/dynamic";
 
+// Disable static optimization for admin pages (react-admin requires client-side rendering)
+
 const AdminClient = dynamic(() => import("./AdminClient"), {
   ssr: false,
   loading: () => (

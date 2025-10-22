@@ -35,12 +35,12 @@ export interface ApiDataContextType {
     QueryObserverResult<IFundingSnapshot | null, TRPCClientErrorLike<AppRouter>>
   >;
 
-  marketPresaleDetailsData: IPMXGetPresaleMarketDetails | undefined;
+  marketPresaleDetailsData: IPMXGetPresaleMarketDetails | null | undefined;
   isLoadingMarketPresaleDetails: boolean;
   marketPresaleDetailsError: TRPCClientErrorLike<AppRouter> | null;
   refetchMarketPresaleDetails: () => Promise<
     QueryObserverResult<
-      IPMXGetPresaleMarketDetails | undefined,
+      IPMXGetPresaleMarketDetails | null | undefined,
       TRPCClientErrorLike<AppRouter>
     >
   >;

@@ -48,10 +48,8 @@
   // Configure remote user
   "remoteUser": "node",
 
-  // Set environment variables
+  // Set environment variables (matches Railway format)
   "remoteEnv": {
-    "DATABASE_URL": "postgresql://postgres:postgres@db:5432/conspirafi?schema=public&connection_limit=10&pool_timeout=20&pgbouncer=false"
+    "DATABASE_URL": "postgresql://postgres:postgres@db:5432/conspirafi"
   }
 }
-
-
