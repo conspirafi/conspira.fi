@@ -13,25 +13,43 @@
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prisma": "prisma",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate"
   },
   "dependencies": {
+    "@ai-sdk/xai": "^2.0.23",
+    "@hello-pangea/dnd": "^17.0.0",
+    "@prisma/client": "^6.17.1",
     "@sglara/cn": "^1.0.0",
+    "@supabase/supabase-js": "^2.75.0",
     "@t3-oss/env-nextjs": "^0.12.0",
     "@tanstack/react-query": "^5.69.0",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
+    "ai": "^5.0.60",
     "axios": "^1.12.2",
     "chart.js": "^4.5.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.23.22",
+    "lru-cache": "^11.2.2",
     "next": "^15.2.3",
+    "prisma": "^6.17.1",
+    "ra-data-simple-rest": "^5.12.0",
     "react": "^19.0.0",
+    "react-admin": "^5.12.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
     "sass": "^1.93.2",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
+    "twitter-api-v2": "^1.20.1",
     "zod": "^3.24.2",
     "zustand": "^5.0.8"
   },
@@ -50,11 +68,25 @@
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4.0.15",
+    "tsx": "^4.20.6",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0"
   },
   "ct3aMetadata": {
     "initVersion": "7.39.3"
   },
-  "packageManager": "npm@10.9.2"
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@hello-pangea/dnd": {
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0"
+    }
+  }
 }

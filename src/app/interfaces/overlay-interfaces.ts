@@ -2,13 +2,12 @@ import type {
   IPMXGetMarketFees,
   IPMXGetPresaleMarketDetails,
 } from "~/server/schemas";
-import type { EventCase } from "../store/eventData";
-import type { IEventSchema } from "~/server/events";
+import type { IEventSchema } from "~/server/types";
 
 export interface OverlayProps {
   children?: React.ReactNode;
   marketFees?: IPMXGetMarketFees | null;
-  data: IPMXGetPresaleMarketDetails | undefined;
+  data: IPMXGetPresaleMarketDetails | null | undefined;
 }
 
 export interface EventDetailsProps {
@@ -25,9 +24,10 @@ export interface EventTimerProps {
 export interface MobileEventDetailsProps {
   activeEventCase: IEventSchema | null;
   marketFees?: IPMXGetMarketFees | null;
-  data: IPMXGetPresaleMarketDetails | undefined;
+  data: IPMXGetPresaleMarketDetails | null | undefined;
 }
 
 export interface VolumeElementProps {
   marketFees: IPMXGetMarketFees | undefined;
+  volumePercentage?: number;
 }

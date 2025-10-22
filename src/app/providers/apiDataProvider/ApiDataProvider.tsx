@@ -3,6 +3,7 @@
 import React, { type ReactNode, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { ApiDataContext } from "./ApiDataContext";
+import { useEventCasesStore } from "~/app/store/useEventStore";
 
 interface ApiDataProviderProps {
   children: ReactNode;
@@ -11,47 +12,86 @@ interface ApiDataProviderProps {
 export const ApiDataProvider: React.FC<ApiDataProviderProps> = ({
   children,
 }) => {
+  const { activeEventCase } = useEventCasesStore();
+
+  // Note: Preview functionality is handled in loader.tsx component
+
+  // Get marketSlug from active event case
+  const marketSlug = activeEventCase?.marketSlug || "";
+  const yesTokenMint = activeEventCase?.historicPricesTokens.yesTokenMint || "";
+  const noTokenMint = activeEventCase?.historicPricesTokens.noTokenMint || "";
+
   const {
     data: marketData,
     isLoading: isLoadingMarket,
     error: marketError,
     refetch: refetchMarket,
-  } = api.pmxMarketRouter.getMarket.useQuery();
+  } = api.pmxMarketRouter.getMarket.useQuery(
+    { marketSlug },
+    { enabled: !!marketSlug },
+  );
 
   const {
     data: marketFeesData,
     isLoading: isLoadingMarketFees,
     error: marketFeesError,
     refetch: refetchMarketFees,
-  } = api.pmxMarketRouter.getMarketFees.useQuery();
+  } = api.pmxMarketRouter.getMarketFees.useQuery(
+    { marketSlug },
+    { enabled: !!marketSlug },
+  );
 
   const {
     data: fundingSnapshotData,
     isLoading: isLoadingFundingSnapshot,
     error: fundingSnapshotError,
     refetch: refetchFundingSnapshot,
-  } = api.pmxMarketRouter.getFundingSnapshot.useQuery();
+  } = api.pmxMarketRouter.getFundingSnapshot.useQuery(
+    { marketSlug },
+    { enabled: !!marketSlug },
+  );
 
   const {
     data: marketPresaleDetailsData,
     isLoading: isLoadingMarketPresaleDetails,
     error: marketPresaleDetailsError,
     refetch: refetchMarketPresaleDetails,
-  } = api.pmxMarketRouter.getPresaleMarketDetails.useQuery();
+  } = api.pmxMarketRouter.getPresaleMarketDetails.useQuery(
+    { marketSlug },
+    { enabled: !!marketSlug },
+  );
 
   const {
     data: marketPriceHistoryYesData,
     isLoading: isMarketPriceHistoryYes,
     error: marketPriceHistoryYesError,
     refetch: refetchMarketPriceHistoryYes,
-  } = api.pmxMarketRouter.getMarketHistory.useQuery({ type: "YES" });
+  } = api.pmxMarketRouter.getMarketHistory.useQuery(
+    {
+      type: "YES",
+      tokenMints: {
+        yesTokenMints: yesTokenMint,
+        noTokenMint: noTokenMint,
+      },
+    },
+    { enabled: !!yesTokenMint && !!noTokenMint },
+  );
 
   const {
     data: marketPriceHistoryNoData,
     isLoading: isMarketPriceHistoryNo,
     error: marketPriceHistoryNoError,
     refetch: refetchMarketPriceHistoryNo,
-  } = api.pmxMarketRouter.getMarketHistory.useQuery({ type: "NO" });
+  } = api.pmxMarketRouter.getMarketHistory.useQuery(
+    {
+      type: "NO",
+      tokenMints: {
+        yesTokenMints: yesTokenMint,
+        noTokenMint: noTokenMint,
+      },
+    },
+    { enabled: !!yesTokenMint && !!noTokenMint },
+  );
 
   const contextValue = useMemo(
     () => ({

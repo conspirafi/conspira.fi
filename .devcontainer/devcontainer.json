@@ -1,0 +1,57 @@
+{
+  "name": "Conspira.fi Development",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "Prisma.prisma",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "[prisma]": {
+          "editor.defaultFormatter": "Prisma.prisma"
+        }
+      }
+    }
+  },
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true
+    }
+  },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [3000, 5432],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "bash ${containerWorkspaceFolder}/.devcontainer/setup.sh",
+
+  // Configure remote user
+  "remoteUser": "node",
+
+  // Set environment variables
+  "remoteEnv": {
+    "DATABASE_URL": "postgresql://postgres:postgres@db:5432/conspirafi?schema=public&connection_limit=10&pool_timeout=20&pgbouncer=false"
+  }
+}
+
+

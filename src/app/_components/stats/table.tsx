@@ -12,6 +12,9 @@ interface StatsTableProps {
   yesHistory: IMarketHistory | undefined;
   noHistory: IMarketHistory | undefined;
   onClose: () => void;
+  selectedOutcome: "Yes" | "No";
+  yesTokenMint: string;
+  noTokenMint: string;
 }
 
 const StatsTable: React.FC<StatsTableProps> = (props) => {
@@ -39,18 +42,26 @@ const StatsTable: React.FC<StatsTableProps> = (props) => {
         props.yesHistory?.historicalData,
         props.noHistory?.historicalData,
       );
-      return prepareData;
+      // Filter to only show trades for the selected outcome
+      return prepareData.filter((item) => item.type === props.selectedOutcome);
     }
     return [];
-  }, [props.yesHistory, props.noHistory]);
+  }, [props.yesHistory, props.noHistory, props.selectedOutcome]);
 
   const openTrade = (type: "PMX" | "JUPITER") => {
     switch (type) {
       case "PMX":
-        window.open(`https://pmx.trade/markets/${props.marketSlug}`);
+        window.open(`https://pmx.trade/markets/${props.marketSlug}`, "_blank");
         break;
       case "JUPITER":
-        window.open("https://pmx.trade/markets/");
+        // Use the correct token mint based on selected outcome
+        const tokenMint =
+          props.selectedOutcome === "Yes"
+            ? props.yesTokenMint
+            : props.noTokenMint;
+        if (tokenMint) {
+          window.open(`https://jup.ag/tokens/${tokenMint}`, "_blank");
+        }
         break;
     }
   };

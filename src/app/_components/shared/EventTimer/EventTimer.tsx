@@ -152,16 +152,10 @@ const EventTimer: React.FC<EventTimerProps> = ({
 
   return (
     <div className="font-enhanced-led-board flex w-auto items-start justify-end text-white">
-      {activeEventCase?.isAсtive ? (
-        <>
-          {isDesktop ? (
-            <DesktopTimer hours={hours} minutes={minutes} seconds={seconds} />
-          ) : (
-            <MobileTimer hours={hours} minutes={minutes} seconds={seconds} />
-          )}
-        </>
+      {isDesktop ? (
+        <DesktopTimer hours={hours} minutes={minutes} seconds={seconds} />
       ) : (
-        <>{isDesktop ? <NotActiveTimer /> : <NotActiveMobileTimer />}</>
+        <MobileTimer hours={hours} minutes={minutes} seconds={seconds} />
       )}
     </div>
   );

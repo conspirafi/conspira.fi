@@ -6,6 +6,8 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
+  output: "standalone",
+  crossOrigin: "use-credentials",
   images: {
     remotePatterns: [
       {
@@ -13,6 +15,18 @@ const config = {
         hostname: "pbs.twimg.com",
         port: "",
         pathname: "/profile_images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "abs.twimg.com",
+        port: "",
+        pathname: "/sticky/default_profile_images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ik.imagekit.io",
+        port: "",
+        pathname: "/memeworks/**",
       },
     ],
   },

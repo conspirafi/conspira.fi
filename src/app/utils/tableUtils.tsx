@@ -13,6 +13,7 @@ export function prepareTableData(
   yesData: IMarketHistoricalData[],
   noData: IMarketHistoricalData[],
 ) {
+  // Match YES and NO prices by index to calculate proper probability ratios
   const historyItems: Activity[] = yesData
     .map((item, idx) => {
       const yesItem = item;
@@ -23,12 +24,13 @@ export function prepareTableData(
         no: noItem?.price || 0,
       };
 
+      // Calculate probability as ratio: price / (yesPrice + noPrice) * 100
       const total =
         parseFloat(rawPrice.yes.toString()) +
         parseFloat(rawPrice.no.toString());
 
-      const yesPercentage = (rawPrice.yes / total) * 100;
-      const noPercentage = (rawPrice.no / total) * 100;
+      const yesPercentage = total > 0 ? (rawPrice.yes / total) * 100 : 0;
+      const noPercentage = total > 0 ? (rawPrice.no / total) * 100 : 0;
 
       return [
         {
@@ -50,6 +52,7 @@ export function prepareTableData(
       ];
     })
     .flat();
+
   const slicedResultArray = sortByNewest(historyItems).slice(0, 7);
 
   return slicedResultArray;
@@ -80,8 +83,22 @@ function truncate(num: number, decimals: number): number {
 
 function timeAgo(timestamp: number | string): string {
   const now = Date.now();
-  const time =
-    typeof timestamp === "string" ? new Date(timestamp).getTime() : timestamp;
+  let time: number;
+
+  if (typeof timestamp === "string") {
+    // Parse timestamp string to milliseconds
+    time = new Date(timestamp).getTime();
+
+    // If parsing failed, return a fallback
+    if (isNaN(time)) {
+      return "Unknown";
+    }
+  } else {
+    // If it's a number and seems to be in seconds (< year 2100 in milliseconds)
+    // Convert to milliseconds
+    time = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+  }
+
   const diffMs = now - time;
 
   const seconds = Math.floor(diffMs / 1000);

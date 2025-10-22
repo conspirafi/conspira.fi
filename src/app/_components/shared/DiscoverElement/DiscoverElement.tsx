@@ -4,6 +4,7 @@ import { CrossIcon } from "../Overlay/BordersSvg";
 import { useViewport } from "~/app/providers/ViewportProvider";
 import { cn } from "@sglara/cn";
 import { useEventCasesStore } from "~/app/store/useEventStore";
+import { useOnboardingStore } from "~/app/store/onboardingStore";
 
 const DiscoverElement = () => {
   const { isMobile, isDesktop } = useViewport();
@@ -11,6 +12,7 @@ const DiscoverElement = () => {
   const touchStartY = useRef<number | null>(null);
   const touchEndY = useRef<number | null>(null);
   const { activeEventCase } = useEventCasesStore();
+  const isOnboarding = useOnboardingStore((state) => state.isOnboarding);
 
   useEffect(() => {
     const handleWheel = () => {
@@ -85,27 +87,29 @@ const DiscoverElement = () => {
       <div className="absolute right-0 bottom-2">
         <CrossIcon size={isMobile ? "24" : "39"} />
       </div>
-      <AnimatePresence>
-        {activeEventCase?.isAсtive ? (
-          <>
-            {!hasScrolled && (
-              <motion.div
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <p className="font-enhanced-led-board mb-20 text-xl">
-                  {isMobile ? "SWIPE & DISCOVER" : "SCROLL & DISCOVER"}
-                </p>
-              </motion.div>
-            )}
-          </>
-        ) : (
-          <p className="font-enhanced-led-board mb-20 text-center text-5xl leading-16 uppercase">
-            The event will be soon
-          </p>
-        )}
-      </AnimatePresence>
+      {!isOnboarding && (
+        <AnimatePresence>
+          {activeEventCase?.isActive ? (
+            <>
+              {!hasScrolled && (
+                <motion.div
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                >
+                  <p className="font-enhanced-led-board mb-20 text-xl">
+                    {isMobile ? "SWIPE & DISCOVER" : "SCROLL & DISCOVER"}
+                  </p>
+                </motion.div>
+              )}
+            </>
+          ) : (
+            <p className="font-enhanced-led-board mb-20 text-center text-5xl leading-16 uppercase">
+              The market is being created
+            </p>
+          )}
+        </AnimatePresence>
+      )}
     </div>
   );
 };

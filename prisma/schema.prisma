@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Market {
+  id                String          @id @default(cuid())
+  name              String
+  eventTitle        String
+  eventDescription  String
+  marketSlug        String          @unique
+  fundingWallet     String?
+  marketEndTime     DateTime?
+  tweetSearchPhrase String
+  volumePercentage  Float           @default(33.33)
+  isActive          Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  videos            Video[]
+  conspiraInfos     ConspiraInfo[]
+}
+
+model Video {
+  id        String   @id @default(cuid())
+  marketId  String
+  market    Market   @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  videoUrl  String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model ConspiraInfo {
+  id        String   @id @default(cuid())
+  marketId  String
+  market    Market   @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  type      String   // youtube, article, podcast
+  title     String
+  link      String?
+  imgSrc    String?
+  date      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}

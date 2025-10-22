@@ -32,17 +32,18 @@ const Marketlink = ({ link = "" }) => {
   );
 };
 
-const VolumeElement: React.FC<VolumeElementProps> = ({ marketFees }) => {
+const VolumeElement: React.FC<VolumeElementProps> = ({ marketFees, volumePercentage }) => {
   const volume = useMemo(() => {
     if (
       marketFees &&
       marketFees.totalFees &&
       typeof marketFees.totalFees.total === "number"
     ) {
-      return roundToTwoDecimals(marketFees.totalFees.total * 25);
+      const percentage = volumePercentage ?? 33.33;
+      return roundToTwoDecimals(marketFees.totalFees.total * percentage);
     }
     return 0;
-  }, [marketFees]);
+  }, [marketFees, volumePercentage]);
 
   if (volume === 0) {
     return;
@@ -58,15 +59,21 @@ const VolumeElement: React.FC<VolumeElementProps> = ({ marketFees }) => {
 
 const MobileEventDetails: React.FC<MobileEventDetailsProps> = (props) => {
   const { isDesktop } = useViewport();
+  const pmxLink = props.data?.slug
+    ? `https://pmx.trade/markets/presale/${props.data.slug}`
+    : "";
 
   return (
     <div className="flex w-full items-center justify-start gap-8 text-white">
       <EventTimer
-        targetDateString={props?.data?.end_date || undefined}
+        targetDateString={props.activeEventCase?.marketEndTime || props?.data?.end_date || undefined}
         isDesktop={isDesktop}
       />
-      <VolumeElement marketFees={props.marketFees || undefined} />
-      <Marketlink link="https://pmx.trade/markets/presale/will-comet-3iatlas-show-evidence-of-alien-technology-20250926084948" />
+      <VolumeElement 
+        marketFees={props.marketFees || undefined} 
+        volumePercentage={props.activeEventCase?.volumePercentage}
+      />
+      {pmxLink && <Marketlink link={pmxLink} />}
     </div>
   );
 };

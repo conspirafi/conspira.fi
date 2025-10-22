@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useVideo } from "~/app/providers/VideoProvider";
 import { useEventCasesStore } from "~/app/store/useEventStore";
+import { useOnboardingStore } from "~/app/store/onboardingStore";
 
 const VideoPlayerWithEQ: React.FC = () => {
   const { setVideoElement, isMuted } = useVideo();
@@ -11,6 +12,9 @@ const VideoPlayerWithEQ: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const savedTimeRef = useRef<number>(0);
+
+  const { isOnboarding, needsOnboarding, startOnboarding, finishOnboarding } =
+    useOnboardingStore();
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -35,41 +39,75 @@ const VideoPlayerWithEQ: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (needsOnboarding && !isOnboarding) {
+      startOnboarding();
+    }
+  }, [needsOnboarding, isOnboarding, startOnboarding]);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (video) {
-      setVideoElement(video);
+    if (!video) return;
 
-      const handleVisibilityChange = () => {
-        if (document.visibilityState === "hidden") {
-          savedTimeRef.current = video.currentTime;
-          video.pause();
-          video.src = "";
-          video.load();
-        } else {
-          video.src = activeEventCase?.eventVideo || "/3I Atlas optmizide.mp4";
-          video.load();
-          video.addEventListener(
-            "loadedmetadata",
-            () => {
-              video.currentTime = savedTimeRef.current;
-              video.play();
-            },
-            { once: true },
-          );
-        }
-      };
+    const videoSrc = isOnboarding
+      ? "https://ik.imagekit.io/memeworks/Conspirafi%20Markets/conspirafi-intro.mp4?updatedAt=1760012077012"
+      : activeEventCase?.eventVideo ||
+        "https://ik.imagekit.io/memeworks/Conspirafi%20Markets/conspirafi-3I-Atlas-1.mp4?updatedAt=1760010578180";
 
-      document.addEventListener("visibilitychange", handleVisibilityChange);
+    video.src = videoSrc;
+    video.load();
 
-      return () => {
-        document.removeEventListener(
-          "visibilitychange",
-          handleVisibilityChange,
-        );
-        setVideoElement(null);
+    const tryPlay = () => {
+      video.play().catch((err) => {
+        console.warn("Video play interrupted:", err);
+      });
+    };
+
+    if (video.readyState >= 2) {
+      tryPlay();
+    } else {
+      video.oncanplay = () => {
+        tryPlay();
+        video.oncanplay = null;
       };
     }
-  }, [setVideoElement]);
+    setVideoElement(video);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        savedTimeRef.current = video.currentTime;
+        video.pause();
+        video.src = "";
+        video.load();
+      } else {
+        video.src = videoSrc;
+        video.load();
+        video.addEventListener(
+          "loadedmetadata",
+          () => {
+            video.currentTime = savedTimeRef.current;
+            video.play();
+          },
+          { once: true },
+        );
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    const handleEnded = () => {
+      if (isOnboarding) {
+        finishOnboarding();
+      }
+    };
+
+    video.addEventListener("ended", handleEnded);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      video.removeEventListener("ended", handleEnded);
+      setVideoElement(null);
+    };
+  }, [setVideoElement, activeEventCase, isOnboarding, finishOnboarding]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -105,8 +143,8 @@ const VideoPlayerWithEQ: React.FC = () => {
         ></div>
         <video
           ref={videoRef}
-          src="/3I Atlas optmizide.mp4"
-          loop
+          loop={!isOnboarding}
+          crossOrigin="anonymous"
           playsInline
           autoPlay
           muted

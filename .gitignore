@@ -5,6 +5,18 @@
 /.pnp
 .pnp.js
 
+# lock files (keep package-lock.json for npm)
+pnpm-lock.yaml
+yarn.lock
+
+# prisma
+prisma/*.db
+prisma/*.db-journal
+prisma/*.db-wal
+
+# backup files
+*.backup
+
 # testing
 /coverage
 

@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Market" 
+  ALTER COLUMN "yesTokenMint" DROP NOT NULL,
+  ALTER COLUMN "noTokenMint" DROP NOT NULL,
+  ADD COLUMN "volumePercentage" DOUBLE PRECISION NOT NULL DEFAULT 33.33;
+
