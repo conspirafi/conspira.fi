@@ -206,7 +206,7 @@ Test markets before going live:
 - Use the "Preview Market" button in admin
 - Or visit: `http://localhost:3000/?preview=MARKET_ID`
 
-## 🚀 Production Deployment (Railway + Docker)
+## 🚀 Production Deployment (Railway)
 
 For detailed deployment instructions, see **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**
 
@@ -215,11 +215,11 @@ For detailed deployment instructions, see **[docs/DEPLOYMENT.md](docs/DEPLOYMENT
 1. **Set up Railway Account**
    - Sign up at [railway.app](https://railway.app)
    - Connect your GitHub repository
-   - Railway will auto-detect the Dockerfile
+   - Railway will auto-detect Next.js
 
 2. **Add PostgreSQL Database**
    - Click "New" → "Database" → "Add PostgreSQL"
-   - Railway provides connection string automatically
+   - Railway automatically sets `DATABASE_URL`
    - Run migrations: `pnpm db:migrate:deploy`
 
 3. **Configure Persistent Volume (for image uploads)**

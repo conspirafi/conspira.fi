@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+// Disable static optimization for login page
+
 export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

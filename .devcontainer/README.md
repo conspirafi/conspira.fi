@@ -1,6 +1,6 @@
 # Dev Container Setup
 
-This devcontainer configuration provides a complete development environment that closely emulates the production Vercel/Supabase setup.
+This devcontainer configuration provides a complete development environment that closely emulates the production Railway setup.
 
 ## Features
 

@@ -91,8 +91,10 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
                       exit="hidden"
                       transition={transition}
                     >
-                      <EventTimer 
-                        targetDateString={activeEventCase?.marketEndTime || props.data?.end_date} 
+                      <EventTimer
+                        targetDateString={
+                          activeEventCase?.marketEndTime || props.data?.end_date
+                        }
                       />
                     </motion.div>
                   )}

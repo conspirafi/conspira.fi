@@ -55,7 +55,6 @@ const PreviewButton = () => {
   );
 };
 
-
 // Custom input for ConspiraInfo with metadata fetching using React Admin form hooks
 const ConspiraInfoLinkInput = ({ source }: { source: string }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -670,7 +669,8 @@ const MarketShow = () => {
         <DateField source="updatedAt" showTime />
 
         <p className="my-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-900 dark:bg-blue-900 dark:text-blue-100">
-          ℹ️ Token mints and links are fetched dynamically from PMX API based on market slug
+          ℹ️ Token mints and links are fetched dynamically from PMX API based on
+          market slug
         </p>
 
         <DragDropSection />

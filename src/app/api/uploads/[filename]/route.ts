@@ -4,8 +4,8 @@ import { join } from "path";
 import { existsSync } from "fs";
 
 /**
- * Serve uploaded files from /tmp directory in production (Vercel)
- * This is only used when not using Supabase Storage
+ * Serve uploaded files from public/admin-uploads directory
+ * Works in both development and production
  */
 export async function GET(
   request: NextRequest,
