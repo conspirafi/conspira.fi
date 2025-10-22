@@ -19,10 +19,7 @@ model Market {
   fundingWallet     String?
   marketEndTime     DateTime?
   tweetSearchPhrase String
-  yesTokenMint      String
-  noTokenMint       String
-  pmxLink           String?
-  jupiterLink       String?
+  volumePercentage  Float           @default(33.33)
   isActive          Boolean         @default(true)
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt

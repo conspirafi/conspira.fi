@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { prisma } from "~/server/db";
 
 export const adminRouter = createTRPCRouter({
   // Markets
   markets: createTRPCRouter({
-    list: publicProcedure.query(async () => {
+    list: protectedProcedure.query(async () => {
       return prisma.market.findMany({
         include: {
           videos: { orderBy: { order: "asc" } },
@@ -15,7 +15,7 @@ export const adminRouter = createTRPCRouter({
       });
     }),
 
-    get: publicProcedure
+    get: protectedProcedure
       .input(z.object({ id: z.string() }))
       .query(async ({ input }) => {
         return prisma.market.findUnique({
@@ -27,7 +27,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    create: publicProcedure
+    create: protectedProcedure
       .input(
         z.object({
           name: z.string(),
@@ -36,10 +36,7 @@ export const adminRouter = createTRPCRouter({
           marketSlug: z.string(),
           marketEndTime: z.union([z.string(), z.date()]).nullable().optional(),
           tweetSearchPhrase: z.string(),
-          yesTokenMint: z.string(),
-          noTokenMint: z.string(),
-          pmxLink: z.string().nullable().optional(),
-          jupiterLink: z.string().nullable().optional(),
+          volumePercentage: z.number().default(33.33),
           isActive: z.boolean().default(false),
         }),
       )
@@ -56,7 +53,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    update: publicProcedure
+    update: protectedProcedure
       .input(
         z.object({
           id: z.string(),
@@ -66,10 +63,7 @@ export const adminRouter = createTRPCRouter({
           marketSlug: z.string().optional(),
           marketEndTime: z.union([z.string(), z.date()]).nullable().optional(),
           tweetSearchPhrase: z.string().optional(),
-          yesTokenMint: z.string().optional(),
-          noTokenMint: z.string().optional(),
-          pmxLink: z.string().nullable().optional(),
-          jupiterLink: z.string().nullable().optional(),
+          volumePercentage: z.number().optional(),
           isActive: z.boolean().optional(),
         }),
       )
@@ -113,7 +107,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    delete: publicProcedure
+    delete: protectedProcedure
       .input(z.object({ id: z.string() }))
       .mutation(async ({ input }) => {
         return prisma.market.delete({
@@ -124,7 +118,7 @@ export const adminRouter = createTRPCRouter({
 
   // Videos
   videos: createTRPCRouter({
-    list: publicProcedure
+    list: protectedProcedure
       .input(z.object({ marketId: z.string() }))
       .query(async ({ input }) => {
         return prisma.video.findMany({
@@ -133,7 +127,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    create: publicProcedure
+    create: protectedProcedure
       .input(
         z.object({
           marketId: z.string(),
@@ -147,7 +141,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    update: publicProcedure
+    update: protectedProcedure
       .input(
         z.object({
           id: z.string(),
@@ -163,7 +157,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    delete: publicProcedure
+    delete: protectedProcedure
       .input(z.object({ id: z.string() }))
       .mutation(async ({ input }) => {
         return prisma.video.delete({
@@ -171,7 +165,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    reorder: publicProcedure
+    reorder: protectedProcedure
       .input(
         z.object({
           items: z.array(
@@ -198,7 +192,7 @@ export const adminRouter = createTRPCRouter({
 
   // ConspiraInfo
   conspiraInfo: createTRPCRouter({
-    list: publicProcedure
+    list: protectedProcedure
       .input(z.object({ marketId: z.string() }))
       .query(async ({ input }) => {
         return prisma.conspiraInfo.findMany({
@@ -207,7 +201,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    create: publicProcedure
+    create: protectedProcedure
       .input(
         z.object({
           marketId: z.string(),
@@ -225,7 +219,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    update: publicProcedure
+    update: protectedProcedure
       .input(
         z.object({
           id: z.string(),
@@ -245,7 +239,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    delete: publicProcedure
+    delete: protectedProcedure
       .input(z.object({ id: z.string() }))
       .mutation(async ({ input }) => {
         return prisma.conspiraInfo.delete({
@@ -253,7 +247,7 @@ export const adminRouter = createTRPCRouter({
         });
       }),
 
-    reorder: publicProcedure
+    reorder: protectedProcedure
       .input(
         z.object({
           items: z.array(

@@ -7,6 +7,7 @@ export const EventSchema = z.object({
   eventDescription: z.string(),
   marketSlug: z.string(),
   tweetSearchPhrase: z.string(),
+  marketEndTime: z.string().or(z.null()).optional(),
   historicPricesTokens: z.object({
     yesTokenMint: z.string(),
     noTokenMint: z.string(),
@@ -14,7 +15,10 @@ export const EventSchema = z.object({
   eventLinks: z.object({
     PMX: z.string().or(z.null()),
     JUPITER: z.string().or(z.null()),
+    JUPITER_YES: z.string().or(z.null()).optional(),
+    JUPITER_NO: z.string().or(z.null()).optional(),
   }),
+  volumePercentage: z.number().default(33.33),
   isActive: z.boolean(),
   conspiraInfoId: z.string(),
   conspiraInfos: z

@@ -6,7 +6,7 @@ This devcontainer configuration provides a complete development environment that
 
 - **Node.js 20**: Latest LTS version
 - **PostgreSQL 16**: Production-like database with optimized settings
-- **npm**: Standard Node package manager with `--legacy-peer-deps` for React 19
+- **pnpm**: Fast, disk space efficient package manager
 - **Automatic Setup**: Dependencies install and database migrations run automatically
 
 ## Getting Started
@@ -24,7 +24,8 @@ This devcontainer configuration provides a complete development environment that
 4. Wait for the container to build and initialize
 
 The setup script will automatically:
-- Install dependencies with npm
+
+- Install dependencies with pnpm
 - Generate Prisma client
 - Run database migrations
 - Seed the database (if configured)
@@ -34,7 +35,7 @@ The setup script will automatically:
 Once the container is ready:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 The server will be available at `http://localhost:3000`
@@ -55,19 +56,19 @@ The `DATABASE_URL` is automatically configured in the container.
 
 ```bash
 # Generate Prisma Client
-npm run db:generate
+pnpm db:generate
 
 # Create a new migration
-npm run db:migrate -- --name your_migration_name
+pnpm db:migrate -- --name your_migration_name
 
 # Apply migrations
-npm run db:migrate:deploy
+pnpm db:migrate:deploy
 
 # Seed database
-npm run db:seed
+pnpm db:seed
 
 # Open Prisma Studio
-npm run db:studio
+pnpm db:studio
 ```
 
 ### Accessing PostgreSQL
@@ -83,6 +84,7 @@ psql -U postgres -d conspirafi
 ## Environment Variables
 
 The devcontainer automatically sets:
+
 - `DATABASE_URL`: PostgreSQL connection string
 - `NODE_ENV`: Set to `development`
 
@@ -105,6 +107,7 @@ docker-compose -f .devcontainer/docker-compose.yml restart db
 ### Port Already in Use
 
 If port 3000 or 5432 is already in use:
+
 1. Stop any local processes using those ports
 2. Rebuild the container: `Dev Containers: Rebuild Container`
 
@@ -135,5 +138,3 @@ This devcontainer is configured to match the production environment:
 - **Scale**: Single container vs distributed system
 
 For file uploads in production, configure Supabase Storage credentials in your environment variables.
-
-

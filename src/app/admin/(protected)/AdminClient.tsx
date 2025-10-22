@@ -55,6 +55,7 @@ const PreviewButton = () => {
   );
 };
 
+
 // Custom input for ConspiraInfo with metadata fetching using React Admin form hooks
 const ConspiraInfoLinkInput = ({ source }: { source: string }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -538,20 +539,12 @@ const MarketEdit = () => (
         fullWidth
         helperText="Twitter search term (e.g., '3I/ATLAS')"
       />
-      <TextInput
-        source="yesTokenMint"
-        validate={required()}
-        fullWidth
-        helperText="Solana YES token mint address"
+      <NumberInput
+        source="volumePercentage"
+        defaultValue={33.33}
+        step={0.01}
+        helperText="Volume multiplier percentage (default: 33.33%)"
       />
-      <TextInput
-        source="noTokenMint"
-        validate={required()}
-        fullWidth
-        helperText="Solana NO token mint address"
-      />
-      <TextInput source="pmxLink" fullWidth helperText="PMX market URL" />
-      <TextInput source="jupiterLink" fullWidth helperText="Jupiter swap URL" />
       <BooleanInput source="isActive" helperText="Show on frontend" />
     </SimpleForm>
   </Edit>
@@ -586,20 +579,12 @@ const MarketCreate = () => (
         fullWidth
         helperText="Twitter search term (e.g., '3I/ATLAS')"
       />
-      <TextInput
-        source="yesTokenMint"
-        validate={required()}
-        fullWidth
-        helperText="Solana YES token mint address"
+      <NumberInput
+        source="volumePercentage"
+        defaultValue={33.33}
+        step={0.01}
+        helperText="Volume multiplier percentage (default: 33.33%)"
       />
-      <TextInput
-        source="noTokenMint"
-        validate={required()}
-        fullWidth
-        helperText="Solana NO token mint address"
-      />
-      <TextInput source="pmxLink" fullWidth helperText="PMX market URL" />
-      <TextInput source="jupiterLink" fullWidth helperText="Jupiter swap URL" />
       <BooleanInput
         source="isActive"
         defaultValue={false}
@@ -676,16 +661,17 @@ const MarketShow = () => {
         <TextField source="name" />
         <TextField source="eventTitle" />
         <TextField source="eventDescription" />
-        <TextField source="marketSlug" />
+        <TextField source="marketSlug" label="Market Slug (PMX)" />
         <DateField source="marketEndTime" showTime />
         <TextField source="tweetSearchPhrase" />
-        <TextField source="yesTokenMint" />
-        <TextField source="noTokenMint" />
-        <TextField source="pmxLink" />
-        <TextField source="jupiterLink" />
+        <TextField source="volumePercentage" label="Volume %" />
         <BooleanField source="isActive" />
         <DateField source="createdAt" showTime />
         <DateField source="updatedAt" showTime />
+
+        <p className="my-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-900 dark:bg-blue-900 dark:text-blue-100">
+          ℹ️ Token mints and links are fetched dynamically from PMX API based on market slug
+        </p>
 
         <DragDropSection />
       </SimpleShowLayout>

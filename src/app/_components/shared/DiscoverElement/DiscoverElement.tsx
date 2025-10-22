@@ -105,7 +105,7 @@ const DiscoverElement = () => {
             </>
           ) : (
             <p className="font-enhanced-led-board mb-20 text-center text-5xl leading-16 uppercase">
-              The event will be soon
+              The market is being created
             </p>
           )}
         </AnimatePresence>

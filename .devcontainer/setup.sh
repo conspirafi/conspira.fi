@@ -3,21 +3,17 @@ set -e
 
 echo "Setting up development environment..."
 
-# Update npm to latest version for better override support
-echo "Updating npm..."
-npm install -g npm@latest
+# Install pnpm globally
+echo "Installing pnpm..."
+npm install -g pnpm@latest
 
-# Clean any existing node_modules and package-lock
+# Clean any existing node_modules and lock files
 echo "Cleaning previous installation artifacts..."
-rm -rf node_modules package-lock.json
-
-# Clear npm cache to avoid conflicts
-echo "Clearing npm cache..."
-npm cache clean --force
+rm -rf node_modules package-lock.json pnpm-lock.yaml
 
 # Install dependencies
-echo "Installing dependencies (this may take a few minutes)..."
-npm install --legacy-peer-deps
+echo "Installing dependencies with pnpm (this may take a few minutes)..."
+pnpm install
 
 # Wait for database to be ready
 echo "Waiting for database..."
@@ -30,16 +26,16 @@ echo "Database is ready!"
 
 # Generate Prisma Client
 echo "Generating Prisma client..."
-npm run db:generate
+pnpm db:generate
 
 # Run migrations
 echo "Running database migrations..."
-npm run db:migrate:deploy
+pnpm db:migrate:deploy
 
 # Seed database (optional, will fail gracefully if seed doesn't exist)
 echo "Seeding database..."
-npm run db:seed || echo "Seeding skipped or failed (this is okay)"
+pnpm db:seed || echo "Seeding skipped or failed (this is okay)"
 
-echo "Setup complete! You can now run 'npm run dev' to start the development server."
+echo "Setup complete! You can now run 'pnpm dev' to start the development server."
 
 

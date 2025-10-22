@@ -21,12 +21,7 @@ async function main() {
         "will-comet-3iatlas-show-evidence-of-alien-technology-20250926084948",
       marketEndTime: new Date("2025-10-31T23:59:59Z"),
       tweetSearchPhrase: "3I/ATLAS",
-      yesTokenMint: "6BqsA6H4BcUU9CPyfRcnXvX9TZcV5bN3iUMMVGPFS6TB",
-      noTokenMint: "6keLtrDSPKLm915Gv46w3cXpbUjQ132BYs8rbCKVJDMT",
-      pmxLink:
-        "https://pmx.trade/markets/presale/will-comet-3iatlas-show-evidence-of-alien-technology-20250926084948",
-      jupiterLink:
-        "https://jup.ag/swap/USDC-6BqsA6H4BcUU9CPyfRcnXvX9TZcV5bN3iUMMVGPFS6TB",
+      volumePercentage: 33.33,
       isActive: true,
       videos: {
         create: [

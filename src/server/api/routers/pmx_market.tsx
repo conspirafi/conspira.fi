@@ -34,14 +34,65 @@ export const pmxMarketRouter = createTRPCRouter({
 
       const result = [];
       for (const market of markets) {
+        // Fetch token mints dynamically from PMX API (not stored in DB)
+        let yesTokenMint = "";
+        let noTokenMint = "";
+
+        try {
+          const pmxResponse = (await pmxApiClient.get(
+            `markets?select=*&slug=eq.${market.marketSlug}`,
+          )) as AxiosResponse<IPMXGetMarket[]>;
+
+          const pmxMarket = pmxResponse.data[0];
+          if (pmxMarket?.cas?.YES?.tokenMint && pmxMarket?.cas?.NO?.tokenMint) {
+            yesTokenMint = pmxMarket.cas.YES.tokenMint;
+            noTokenMint = pmxMarket.cas.NO.tokenMint;
+          }
+        } catch (error) {
+          // Market might still be in presale or API error
+          console.log(
+            `[PMX] Could not fetch token mints for ${market.marketSlug}:`,
+            error instanceof Error ? error.message : "Unknown error",
+          );
+        }
+
         let tweets: ITweetFullData[] = [];
 
         if (market.tweetSearchPhrase) {
-          const cachedTweets = await searchTweetsCached(
-            market.tweetSearchPhrase,
+          try {
+            console.log(
+              `[Tweets] Fetching tweets for phrase: "${market.tweetSearchPhrase}"`,
+            );
+            const cachedTweets = await searchTweetsCached(
+              market.tweetSearchPhrase,
+            );
+            tweets = cachedTweets.data;
+            console.log(
+              `[Tweets] Found ${tweets.length} tweets for market: ${market.name}`,
+            );
+          } catch (error) {
+            console.error(
+              `[Tweets] Error fetching tweets for "${market.tweetSearchPhrase}":`,
+              error,
+            );
+            tweets = [];
+          }
+        } else {
+          console.log(
+            `[Tweets] No tweet search phrase set for market: ${market.name}`,
           );
-          tweets = cachedTweets.data;
         }
+
+        // Generate dynamic Jupiter links from fetched token mints
+        const jupiterYesLink = yesTokenMint
+          ? `https://jup.ag/tokens/${yesTokenMint}`
+          : null;
+        const jupiterNoLink = noTokenMint
+          ? `https://jup.ag/tokens/${noTokenMint}`
+          : null;
+
+        // Generate PMX link from market slug
+        const pmxLink = `https://pmx.trade/markets/${market.marketSlug}`;
 
         // Transform database format to match expected event format
         const event = {
@@ -51,14 +102,18 @@ export const pmxMarketRouter = createTRPCRouter({
           eventDescription: market.eventDescription,
           marketSlug: market.marketSlug,
           tweetSearchPhrase: market.tweetSearchPhrase,
+          marketEndTime: market.marketEndTime?.toISOString() ?? null,
           historicPricesTokens: {
-            yesTokenMint: market.yesTokenMint,
-            noTokenMint: market.noTokenMint,
+            yesTokenMint,
+            noTokenMint,
           },
           eventLinks: {
-            PMX: market.pmxLink ?? null,
-            JUPITER: market.jupiterLink ?? null,
+            PMX: pmxLink,
+            JUPITER: jupiterYesLink,
+            JUPITER_YES: jupiterYesLink,
+            JUPITER_NO: jupiterNoLink,
           },
+          volumePercentage: market.volumePercentage,
           isActive: market.isActive,
           conspiraInfoId: market.id,
           tweets,
@@ -78,11 +133,21 @@ export const pmxMarketRouter = createTRPCRouter({
   getPresaleMarketDetails: publicProcedure
     .input(z.object({ marketSlug: z.string() }))
     .query(async ({ input }) => {
-      const pmxMarketResponse = (await pmxApiClient.get(
-        `presale-markets?select=*&slug=eq.${input.marketSlug}`,
-      )) as AxiosResponse<IPMXGetPresaleMarketDetails[]>;
+      try {
+        const pmxMarketResponse = (await pmxApiClient.get(
+          `presale-markets?select=*&slug=eq.${input.marketSlug}`,
+        )) as AxiosResponse<IPMXGetPresaleMarketDetails[]>;
 
-      return pmxMarketResponse.data[0];
+        return pmxMarketResponse.data[0] || null;
+      } catch (error) {
+        console.log(
+          `[PMX] Could not fetch presale market details for ${input.marketSlug}:`,
+          error instanceof Error
+            ? error.message
+            : "Market not found on PMX yet",
+        );
+        return null;
+      }
     }),
   getFundingSnapshot: publicProcedure
     .input(z.object({ marketSlug: z.string() }))

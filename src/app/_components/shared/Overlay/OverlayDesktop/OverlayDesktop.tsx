@@ -72,7 +72,7 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
                       <h1 className="font-inter text-center text-[21px] opacity-30">
                         Terminal
                       </h1>
-                      <p className="font-inter text-[21px]">
+                      <p className="font-inter text-center text-[21px]">
                         {activeEventCase?.name}
                       </p>
                     </motion.div>
@@ -82,7 +82,7 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
 
               <div className="flex h-auto w-full flex-2 justify-end">
                 <AnimatePresence mode="wait">
-                  {props.data?.end_date && (
+                  {(activeEventCase?.marketEndTime || props.data?.end_date) && (
                     <motion.div
                       key={activeEventCase?.name}
                       variants={contentVariants}
@@ -91,7 +91,9 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
                       exit="hidden"
                       transition={transition}
                     >
-                      <EventTimer targetDateString={props.data.end_date} />
+                      <EventTimer 
+                        targetDateString={activeEventCase?.marketEndTime || props.data?.end_date} 
+                      />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -102,7 +104,7 @@ const OverlayDesktop: React.FC<OverlayProps> = (props) => {
               <h1 className="font-inter text-center text-[21px] opacity-30">
                 Terminal
               </h1>
-              <p className="font-inter text-[21px]">CONSPIRA.FI</p>
+              <p className="font-inter text-center text-[21px]">CONSPIRA.FI</p>
             </div>
           )}
         </div>

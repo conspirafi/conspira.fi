@@ -1,279 +1,296 @@
-# Deployment Guide
+# Deployment Guide - Railway
 
-## Vercel + Supabase Setup
+This guide covers deploying Conspira.fi to Railway using Docker.
 
-### Prerequisites
+## Prerequisites
 
-- Vercel account
-- Supabase project
+- Railway account ([railway.app](https://railway.app))
+- GitHub repository connected to Railway
 - Domain configured (optional)
 
-## Database Setup (Supabase)
+## Database Setup (Railway Postgres)
 
-### 1. Create Supabase Project
+### 1. Create PostgreSQL Database
 
-1. Go to [supabase.com](https://supabase.com)
-2. Create a new project
-3. Wait for the project to initialize
+1. In your Railway project, click "New" → "Database" → "Add PostgreSQL"
+2. Railway will automatically create the database and provide connection details
+3. Copy the `DATABASE_URL` from the "Connect" tab
 
-### 2. Get Database Connection String
+### 2. Run Migrations
 
-From your Supabase project:
-1. Go to **Settings** → **Database**
-2. Copy the **Connection Pooling** connection string (Transaction mode)
-3. This should look like:
-   ```
-   postgresql://postgres:[password]@[project-ref].supabase.co:5432/postgres?pgbouncer=true&connection_limit=1
-   ```
-
-### 3. Configure Connection String
-
-**Important**: For Vercel deployment with Supabase, use these connection string parameters:
-
-```
-postgresql://postgres:[password]@[project-ref].supabase.co:5432/postgres?pgbouncer=true&connection_limit=1
-```
-
-Key parameters:
-- `pgbouncer=true`: Enables connection pooling compatibility
-- `connection_limit=1`: Limits connections per serverless function
-
-### 4. Run Migrations
-
-From your local environment:
+From your local environment with DATABASE_URL set:
 
 ```bash
-# Set the Supabase DATABASE_URL
-export DATABASE_URL="postgresql://postgres:[password]@[project-ref].supabase.co:5432/postgres?pgbouncer=true&connection_limit=1"
+# Set the Railway DATABASE_URL
+export DATABASE_URL="postgresql://postgres:password@host:port/railway"
 
 # Run migrations
-npm run db:migrate:deploy
+pnpm db:migrate:deploy
 
 # Optionally seed the database
-npm run db:seed
+pnpm db:seed
 ```
 
-## File Storage Setup (Supabase)
+Or run migrations directly in Railway:
 
-### 1. Create Storage Bucket
+1. Go to your Railway project
+2. Click on your service
+3. Go to "Settings" → "Deploy" → "Custom Start Command"
+4. Temporarily set: `pnpm db:migrate:deploy && node server.js`
+5. Redeploy, then change back to: `node server.js`
 
-1. In Supabase, go to **Storage**
-2. Create a new bucket called `admin-uploads`
-3. Make it **public** (for serving images)
+## File Storage Setup
 
-### 2. Configure Policies
+Railway provides **persistent volumes** for file storage.
 
-Add these policies to the bucket:
+### Create a Volume
 
-**SELECT (Read) - Public access:**
-```sql
-CREATE POLICY "Public Access"
-ON storage.objects FOR SELECT
-USING ( bucket_id = 'admin-uploads' );
-```
+1. In your Railway service, go to "Settings" → "Volumes"
+2. Click "New Volume"
+3. Set mount path: `/app/public/admin-uploads`
+4. Capacity: 1GB (adjust as needed)
+5. Click "Add"
 
-**INSERT (Upload) - Authenticated only:**
-```sql
-CREATE POLICY "Authenticated Upload"
-ON storage.objects FOR INSERT
-WITH CHECK (
-  bucket_id = 'admin-uploads'
-  AND auth.role() = 'authenticated'
-);
-```
+This ensures uploaded images persist across deployments.
 
-Or for service role uploads (which is what we use):
-```sql
-CREATE POLICY "Service Role Upload"
-ON storage.objects FOR INSERT
-WITH CHECK ( bucket_id = 'admin-uploads' );
-```
-
-### 3. Get Supabase Credentials
-
-From your Supabase project:
-1. Go to **Settings** → **API**
-2. Copy:
-   - **Project URL**: `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon public key**: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - **service_role key**: `SUPABASE_SERVICE_ROLE_KEY` (keep secret!)
-
-## Vercel Setup
+## Railway Deployment
 
 ### 1. Connect Repository
 
-1. Go to [vercel.com](https://vercel.com)
-2. Import your repository
-3. Select the project
+1. Go to [railway.app](https://railway.app)
+2. Click "New Project"
+3. Select "Deploy from GitHub repo"
+4. Choose your `conspira.fi` repository
+5. Railway will auto-detect the Dockerfile
 
 ### 2. Configure Environment Variables
 
-In Vercel project settings, add these environment variables:
+In Railway project settings, add these environment variables:
 
-#### Required Variables
 ```bash
-# Database
-DATABASE_URL="postgresql://postgres:[password]@[project-ref].supabase.co:5432/postgres?pgbouncer=true&connection_limit=1"
+# Database (automatically set by Railway if using their Postgres)
+DATABASE_URL=${{Postgres.DATABASE_URL}}
 
 # Admin
-ADMIN_PASSWORD="your-secure-admin-password"
+ADMIN_PASSWORD=your-secure-admin-password
 
 # Twitter
-TWITTER_BEARER_TOKEN="your-twitter-bearer-token"
+TWITTER_BEARER_TOKEN=your-twitter-bearer-token
 
 # xAI
-XAI_API_KEY="your-xai-api-key"
+XAI_API_KEY=your-xai-api-key
 
 # PMX API
-PMX_API_KEY="your-pmx-api-key"
-PMX_API_AUTHORIZATION="your-pmx-authorization"
-PMX_BASE_URL="https://api.pmx.com"
-PMX_FEES_BASE_URL="https://fees.pmx.com"
+PMX_API_KEY=your-pmx-api-key
+PMX_API_AUTHORIZATION=your-pmx-authorization
+PMX_BASE_URL=https://xqdrbspnwgjvzvgzulls.supabase.co/rest/v1/
+PMX_FEES_BASE_URL=https://backend-production-2715.up.railway.app/api/
+HISTORIC_PRICES_API_URL=https://streamer-production-3d21.up.railway.app/api/prices/
 
-# Historic Prices
-HISTORIC_PRICES_API_URL="https://prices.example.com"
-
-# Node Environment (set by Vercel automatically)
-NODE_ENV="production"
+# Node Environment (automatically set by Railway)
+NODE_ENV=production
 ```
 
-#### Optional (for Supabase Storage)
-```bash
-# Supabase (for file uploads)
-NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
-SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-```
-
-**Note**: If you don't configure Supabase Storage, uploads will use `/tmp` directory (which is ephemeral on Vercel).
+**Note**: Use Railway's reference variables like `${{Postgres.DATABASE_URL}}` to automatically inject database credentials.
 
 ### 3. Deploy
 
-Vercel will automatically deploy when you push to your main branch.
+Railway will automatically deploy when you push to your main branch.
+
+**Manual deployment:**
+
+1. Click "Deploy" in Railway dashboard
+2. Railway builds the Docker image
+3. Runs health checks
+4. Serves on the generated Railway URL
+
+### 4. Custom Domain (Optional)
+
+1. In Railway, go to "Settings" → "Domains"
+2. Click "Generate Domain" for a Railway subdomain
+3. Or add your custom domain and configure DNS
 
 ## Post-Deployment
 
 ### Verify Deployment
 
-1. Check that the site loads
-2. Test admin login
-3. Try uploading an image
-4. Verify database queries work
+1. ✅ Check that the site loads
+2. ✅ Test admin login at `your-url.railway.app/admin/login`
+3. ✅ Try uploading an image
+4. ✅ Verify database queries work
+5. ✅ Check volume is mounted: uploaded images persist after redeployment
 
 ### Monitor for Issues
 
+View logs in Railway:
+
+1. Go to your service
+2. Click "Deployments"
+3. View real-time logs
+
 Common issues:
 
-#### "Prepared statement already exists"
-- Check `DATABASE_URL` has `pgbouncer=true&connection_limit=1`
-- Verify Prisma client configuration in `src/server/db.ts`
+#### Database connection errors
 
-#### Upload fails with 500 error
-- If not using Supabase Storage, uploads will be ephemeral
-- Check Vercel logs for specific errors
-- Verify Supabase credentials if configured
+- Verify `DATABASE_URL` is correctly set
+- Check Prisma client is generated (should happen in Docker build)
+- Ensure migrations have run
 
-#### Database connection timeout
-- Check connection string is correct
-- Verify Supabase project is running
-- Check connection limit settings
+#### Upload fails
+
+- Check volume is mounted at `/app/public/admin-uploads`
+- Verify volume has write permissions
+- Check Railway logs for specific errors
+
+#### Port binding issues
+
+- Ensure `PORT=3000` is set
+- Verify `HOSTNAME="0.0.0.0"` in Dockerfile
 
 ## Maintenance
 
-### Database Migrations
+### Running Migrations
 
-To run new migrations on production:
+When you have new migrations:
+
+Option 1 - Local:
 
 ```bash
-# Set production DATABASE_URL
-export DATABASE_URL="postgresql://postgres:[password]@[project-ref].supabase.co:5432/postgres?pgbouncer=true&connection_limit=1"
+export DATABASE_URL="your-railway-postgres-url"
+pnpm db:migrate:deploy
+```
 
-# Run migrations
-npm run db:migrate:deploy
+Option 2 - Railway CLI:
+
+```bash
+railway run pnpm db:migrate:deploy
+```
+
+### Viewing Database
+
+Use Railway's built-in database viewer:
+
+1. Go to your Postgres service
+2. Click "Data" tab
+3. Browse tables directly
+
+Or use Prisma Studio:
+
+```bash
+export DATABASE_URL="your-railway-postgres-url"
+pnpm db:studio
 ```
 
 ### Backup Database
 
-Use Supabase's built-in backup features:
-1. Go to **Settings** → **Database**
-2. Configure daily backups
-3. Enable Point-in-Time Recovery (for paid plans)
+Railway provides automatic backups for paid plans.
 
-### Monitor Performance
+Manual backup:
 
-- Use Vercel Analytics for frontend performance
-- Use Supabase logs for database queries
-- Set up error tracking (Sentry, etc.)
-
-## Scaling
-
-### Database
-- Upgrade Supabase plan for more connections
-- Use Supabase's connection pooler (PgBouncer)
-- Consider read replicas for high traffic
-
-### Storage
-- Supabase Storage scales automatically
-- Consider CDN for static assets
-
-### Serverless Functions
-- Vercel scales automatically
-- Monitor function execution time
-- Optimize cold starts if needed
-
-## Troubleshooting
-
-### Database Issues
-
-**Connection Errors:**
 ```bash
-# Test connection
-psql "postgresql://postgres:[password]@[project-ref].supabase.co:5432/postgres?pgbouncer=true"
-
-# Check migrations
-npm run prisma migrate status
+railway run pg_dump > backup.sql
 ```
 
-**Performance Issues:**
-- Add indexes to frequently queried fields
-- Use Supabase dashboard to analyze slow queries
-- Consider database plan upgrade
+### Scaling
 
-### Upload Issues
+Railway automatically handles:
 
-**Images not persisting:**
-- Without Supabase Storage, uploads to `/tmp` are ephemeral
-- Configure Supabase Storage for persistent uploads
+- Horizontal scaling (add more replicas in `railway.json`)
+- Vertical scaling (upgrade service plan)
+- Auto-restart on failures
 
-**Large files failing:**
-- Check file size limits (default 5MB)
-- Adjust limits in storage handler if needed
-- Consider Vercel function size limits
+To scale:
+
+1. Edit `railway.json` → `deploy.numReplicas`
+2. Push to trigger redeployment
+
+**Note**: With multiple replicas, ensure volume is configured for shared access.
+
+## Environment Variables Reference
+
+| Variable                  | Required | Description                                        |
+| ------------------------- | -------- | -------------------------------------------------- |
+| `DATABASE_URL`            | Yes      | PostgreSQL connection string (auto-set by Railway) |
+| `ADMIN_PASSWORD`          | Yes      | Admin panel password                               |
+| `TWITTER_BEARER_TOKEN`    | Yes      | Twitter API v2 bearer token                        |
+| `XAI_API_KEY`             | Yes      | xAI API key for AI features                        |
+| `PMX_API_KEY`             | Yes      | PMX platform API key                               |
+| `PMX_API_AUTHORIZATION`   | Yes      | PMX authorization token                            |
+| `PMX_BASE_URL`            | Yes      | PMX API base URL                                   |
+| `PMX_FEES_BASE_URL`       | Yes      | PMX fees API URL                                   |
+| `HISTORIC_PRICES_API_URL` | Yes      | Historic prices API URL                            |
 
 ## Rollback
 
 To rollback a deployment:
 
-1. In Vercel dashboard, go to **Deployments**
-2. Find previous working deployment
-3. Click **⋯** → **Promote to Production**
+1. In Railway dashboard, go to "Deployments"
+2. Find the previous working deployment
+3. Click "⋯" → "Redeploy"
 
-To rollback database migrations:
-
-```bash
-# This is not recommended - better to migrate forward
-# Only use in emergencies
-npm run prisma migrate resolve -- --rolled-back [migration-name]
-```
+Or rollback your git commit and push.
 
 ## Security Checklist
 
-- [ ] All environment variables are set
-- [ ] `ADMIN_PASSWORD` is strong and unique
-- [ ] `SUPABASE_SERVICE_ROLE_KEY` is kept secret (server-side only)
-- [ ] Supabase Storage policies are configured correctly
-- [ ] Database is only accessible via Supabase (not exposed publicly)
-- [ ] CORS is configured if needed
-- [ ] Rate limiting is in place for API routes
+- [x] All environment variables are set
+- [x] `ADMIN_PASSWORD` is strong and unique
+- [x] Database is only accessible within Railway network
+- [x] HTTPS is enabled (automatic with Railway domains)
+- [x] Volume permissions are set correctly
+- [x] Health checks are passing
 
+## Troubleshooting
 
+### Deployment fails during build
+
+Check Docker build logs in Railway:
+
+- Ensure all dependencies install correctly
+- Verify Prisma generates properly
+- Check for TypeScript errors
+
+### Application crashes on startup
+
+View logs:
+
+```bash
+railway logs
+```
+
+Common causes:
+
+- Missing environment variables
+- Database connection failure
+- Port binding issues
+
+### Images not persisting
+
+- Verify volume is created and mounted
+- Check mount path: `/app/public/admin-uploads`
+- Ensure volume has adequate space
+
+### Database query timeouts
+
+- Check connection pooling settings
+- Verify database plan has adequate resources
+- Add indexes to frequently queried fields
+
+## Cost Optimization
+
+Railway pricing tips:
+
+- Use the free tier for development
+- Upgrade to Pro for production
+- Monitor usage in Railway dashboard
+- Set up usage alerts
+
+## Additional Resources
+
+- [Railway Documentation](https://docs.railway.app)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Next.js Deployment](https://nextjs.org/docs/deployment)
+- [Docker Best Practices](https://docs.docker.com/develop/dev-best-practices/)
+
+---
+
+**Ready to deploy?** Push your code and Railway will handle the rest! 🚀

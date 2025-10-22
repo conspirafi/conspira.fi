@@ -24,7 +24,7 @@ const conspirafiVariants = {
 };
 
 export interface FundingStateComponentProps {
-  data: IPMXGetPresaleMarketDetails | undefined;
+  data: IPMXGetPresaleMarketDetails | null | undefined;
   fundingSnapshot: IFundingSnapshot | null;
 }
 

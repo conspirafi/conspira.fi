@@ -6,9 +6,10 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { cookies } from "next/headers";
 
 /**
  * 1. CONTEXT
@@ -101,3 +102,32 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
+
+/**
+ * Admin authentication middleware
+ *
+ * Checks if the user has admin privileges by validating the admin_auth cookie.
+ */
+const adminAuthMiddleware = t.middleware(async ({ next }) => {
+  const cookieStore = await cookies();
+  const adminAuth = cookieStore.get("admin_auth");
+
+  if (!adminAuth || adminAuth.value !== "true") {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Admin authentication required",
+    });
+  }
+
+  return next();
+});
+
+/**
+ * Protected (admin-only) procedure
+ *
+ * Use this for admin CRUD operations that should only be accessible
+ * to authenticated admin users.
+ */
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(adminAuthMiddleware);

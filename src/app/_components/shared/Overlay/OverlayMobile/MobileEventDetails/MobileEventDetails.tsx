@@ -32,17 +32,18 @@ const Marketlink = ({ link = "" }) => {
   );
 };
 
-const VolumeElement: React.FC<VolumeElementProps> = ({ marketFees }) => {
+const VolumeElement: React.FC<VolumeElementProps> = ({ marketFees, volumePercentage }) => {
   const volume = useMemo(() => {
     if (
       marketFees &&
       marketFees.totalFees &&
       typeof marketFees.totalFees.total === "number"
     ) {
-      return roundToTwoDecimals(marketFees.totalFees.total * 25);
+      const percentage = volumePercentage ?? 33.33;
+      return roundToTwoDecimals(marketFees.totalFees.total * percentage);
     }
     return 0;
-  }, [marketFees]);
+  }, [marketFees, volumePercentage]);
 
   if (volume === 0) {
     return;
@@ -65,10 +66,13 @@ const MobileEventDetails: React.FC<MobileEventDetailsProps> = (props) => {
   return (
     <div className="flex w-full items-center justify-start gap-8 text-white">
       <EventTimer
-        targetDateString={props?.data?.end_date || undefined}
+        targetDateString={props.activeEventCase?.marketEndTime || props?.data?.end_date || undefined}
         isDesktop={isDesktop}
       />
-      <VolumeElement marketFees={props.marketFees || undefined} />
+      <VolumeElement 
+        marketFees={props.marketFees || undefined} 
+        volumePercentage={props.activeEventCase?.volumePercentage}
+      />
       {pmxLink && <Marketlink link={pmxLink} />}
     </div>
   );

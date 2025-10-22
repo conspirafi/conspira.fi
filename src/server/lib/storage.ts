@@ -3,9 +3,8 @@ import { join } from "path";
 import { existsSync } from "fs";
 
 /**
- * Storage handler that works in both development and production
- * - Development: Uses local filesystem
- * - Production: Uses Supabase Storage (or can be configured for other providers)
+ * Storage handler for filesystem-based uploads
+ * Works in both development and production (with persistent volume)
  */
 
 export interface UploadResult {
@@ -16,9 +15,9 @@ export interface UploadResult {
 }
 
 /**
- * Upload file to storage
- * In development, saves to local filesystem
- * In production, uses Supabase Storage if configured, otherwise uses /tmp
+ * Upload file to filesystem storage
+ * Development: public/admin-uploads/
+ * Production: public/admin-uploads/ (with persistent volume mount)
  */
 export async function uploadFile(
   file: File,
@@ -48,18 +47,8 @@ export async function uploadFile(
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Check if we're in production and have Supabase configured
-    if (
-      process.env.NODE_ENV === "production" &&
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    ) {
-      // Use Supabase Storage
-      return await uploadToSupabase(buffer, filename, options);
-    } else {
-      // Use local filesystem (development) or /tmp (production fallback)
-      return await uploadToFilesystem(buffer, filename, options);
-    }
+    // Always use filesystem
+    return await uploadToFilesystem(buffer, filename, options);
   } catch (error) {
     console.error("Error uploading file:", error);
     return {
@@ -102,58 +91,7 @@ function validateFile(file: File): { valid: boolean; error?: string } {
 }
 
 /**
- * Upload to Supabase Storage
- */
-async function uploadToSupabase(
-  buffer: Buffer,
-  filename: string,
-  options?: { bucket?: string; folder?: string },
-): Promise<UploadResult> {
-  try {
-    const { createClient } = await import("@supabase/supabase-js");
-
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
-
-    const bucket = options?.bucket || "admin-uploads";
-    const folder = options?.folder || "";
-    const path = folder ? `${folder}/${filename}` : filename;
-
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(path, buffer, {
-        contentType: "image/*",
-        upsert: false,
-      });
-
-    if (error) {
-      console.error("Supabase upload error:", error);
-      // Fallback to filesystem if Supabase fails
-      return await uploadToFilesystem(buffer, filename, options);
-    }
-
-    // Get public URL
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from(bucket).getPublicUrl(data.path);
-
-    return {
-      success: true,
-      url: publicUrl,
-      filename,
-    };
-  } catch (error) {
-    console.error("Error uploading to Supabase:", error);
-    // Fallback to filesystem
-    return await uploadToFilesystem(buffer, filename, options);
-  }
-}
-
-/**
- * Upload to local filesystem or /tmp
+ * Upload to local filesystem
  */
 async function uploadToFilesystem(
   buffer: Buffer,
@@ -161,13 +99,9 @@ async function uploadToFilesystem(
   _options?: { folder?: string },
 ): Promise<UploadResult> {
   try {
-    const isProduction = process.env.NODE_ENV === "production";
-
-    // In production (Vercel), use /tmp directory which is writable
-    // In development, use public/admin-uploads
-    const uploadDir = isProduction
-      ? "/tmp/admin-uploads"
-      : join(process.cwd(), "public", "admin-uploads");
+    // Always use public/admin-uploads directory
+    // In Docker/Railway, this will be a persistent volume mount
+    const uploadDir = join(process.cwd(), "public", "admin-uploads");
 
     if (!existsSync(uploadDir)) {
       await mkdir(uploadDir, { recursive: true });
@@ -176,11 +110,8 @@ async function uploadToFilesystem(
     const filepath = join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
-    // In production, we'd need to serve these from /tmp via a separate route
-    // For now, return a temporary URL
-    const publicUrl = isProduction
-      ? `/api/uploads/${filename}`
-      : `/admin-uploads/${filename}`;
+    // Public URL is always /admin-uploads/filename
+    const publicUrl = `/admin-uploads/${filename}`;
 
     return {
       success: true,

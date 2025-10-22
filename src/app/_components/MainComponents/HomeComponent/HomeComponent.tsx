@@ -14,6 +14,7 @@ import { useOnboardingStore } from "~/app/store/onboardingStore";
 import ConspirafiInfo from "../../conspirafi-info/ConspirafiInfo";
 import { useConspirafiStore } from "~/app/store/conspirafiStore";
 import BackBtn from "../../buttons/back-btn";
+import ShowLeaksBtn from "../../buttons/show-leaks-btn";
 
 const contentVariants = {
   hidden: { opacity: 0, y: 0 },
@@ -63,48 +64,40 @@ const HomeComponent: React.FC = () => {
     isMarketPriceHistoryYes ||
     isMarketPriceHistoryNo;
 
-  const anyError =
-    fundingSnapshotError ||
-    marketError ||
-    marketFeesError ||
-    marketPresaleDetailsError ||
-    marketPriceHistoryYesError ||
-    marketPriceHistoryNoError;
-
   if (isInitialLoading) {
     return <div></div>;
   }
-  if (marketPresaleDetailsError) {
-    return (
-      <div>
-        Error loading market details: {marketPresaleDetailsError.message}
-      </div>
-    );
-  }
 
-  if (anyError) {
-    return <div>Error loading data: {anyError.message}</div>;
-  }
+  // Note: PMX data (presale details, market fees, etc.) may be null if market doesn't exist on PMX yet
+  // This is OK - tweets and leaks from database will still show
+  // All components handle null data gracefully with optional chaining
+
+  // Determine which state to show based on available PMX data
+  const hasActiveMarket = marketData !== null;
+  const hasPresaleMarket = marketPresaleDetailsData !== null;
 
   const isFundingState = marketPresaleDetailsData
     ? !(
         marketPresaleDetailsData.migrated &&
         fundingSnapshotData?.summary.targetReached
       )
-    : true;
+    : false;
+
+  // If neither active nor presale market exists on PMX, show basic view without outcome buttons
+  const showMarketUI = hasActiveMarket || hasPresaleMarket;
 
   return (
     <Overlay data={marketPresaleDetailsData} marketFees={marketFeesData}>
       {!isOnboarding && (
         <main className="bg-from-black flex min-h-screen w-screen">
           <AnimatePresence mode="wait">
-            {activeEventCase?.isActive && (
+            {activeEventCase && (
               <motion.div
                 key={activeEventCase.marketSlug}
                 className="h-full w-full"
               >
                 <AnimatePresence mode="wait">
-                  {isFundingState ? (
+                  {showMarketUI && isFundingState ? (
                     <motion.div
                       key="funding-state"
                       variants={contentVariants}
@@ -118,7 +111,7 @@ const HomeComponent: React.FC = () => {
                         fundingSnapshot={fundingSnapshotData}
                       />
                     </motion.div>
-                  ) : (
+                  ) : showMarketUI ? (
                     <motion.div
                       key="trade-in-state"
                       variants={contentVariants}
@@ -132,7 +125,35 @@ const HomeComponent: React.FC = () => {
                         market={marketData}
                         yesHistory={marketPriceHistoryYesData}
                         noHistory={marketPriceHistoryNoData}
+                        volumePercentage={activeEventCase.volumePercentage}
                       />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="no-market-state"
+                      variants={contentVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      transition={transition}
+                      className="pointer-events-none z-40 flex h-screen w-full flex-col items-center justify-end gap-[16px] p-[15px]"
+                    >
+                      {/* Market not on PMX yet - just show Show Leaks button */}
+                      <AnimatePresence>
+                        {!isConspirafiVisible && (
+                          <motion.div
+                            key="conspirafi-info-show-leaks"
+                            className="pointer-events-auto"
+                            variants={conspirafiVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                          >
+                            <ShowLeaksBtn />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -140,7 +161,7 @@ const HomeComponent: React.FC = () => {
             )}
           </AnimatePresence>
 
-          {activeEventCase?.isActive && <FullScreenSpawner />}
+          {activeEventCase && <FullScreenSpawner />}
 
           <AnimatePresence>
             {isConspirafiVisible && (
