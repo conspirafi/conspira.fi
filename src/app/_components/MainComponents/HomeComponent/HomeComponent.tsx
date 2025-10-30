@@ -76,12 +76,13 @@ const HomeComponent: React.FC = () => {
   const hasActiveMarket = marketData !== null;
   const hasPresaleMarket = marketPresaleDetailsData !== null;
 
-  const isFundingState = marketPresaleDetailsData
-    ? !(
-        marketPresaleDetailsData.migrated &&
-        fundingSnapshotData?.summary.targetReached
-      )
-    : false;
+  // const isFundingState = marketPresaleDetailsData
+  //   ? !(
+  //       marketPresaleDetailsData.migrated &&
+  //       fundingSnapshotData?.summary.targetReached
+  //     )
+  //   : false;
+  const isFundingState = true;
 
   // If neither active nor presale market exists on PMX, show basic view without outcome buttons
   const showMarketUI = hasActiveMarket || hasPresaleMarket;
