@@ -25,8 +25,6 @@ export const LimitLine: React.FC<LimitLineProps> = ({
   className,
   isFundingState,
 }) => {
-  balance = 2500;
-
   const balancePercentage =
     limit > 0 ? Math.min((balance / limit) * 100, 100) : 0;
 
